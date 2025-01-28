@@ -1,5 +1,5 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
+import { Image, StyleSheet, Platform, ScrollView, TextInput, View } from 'react-native';
+import { RWMListItem } from '@/components/RWMListItem';
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
@@ -15,6 +15,23 @@ export default function HomeScreen() {
           style={styles.reactLogo}
         />
       }>
+      <ThemedView>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+          <TextInput style={{
+            backgroundColor: 'white',
+            width: 150,
+          }}
+            placeholder='Current Location'></TextInput>
+          <ThemedText>Within: </ThemedText>
+          <TextInput style={{
+            backgroundColor: 'white',
+            width: 50,
+          }}
+            defaultValue='5'>
+          </TextInput>
+          <ThemedText> mi</ThemedText>
+        </View>
+      </ThemedView>
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
@@ -50,7 +67,14 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">app-example</ThemedText>.
         </ThemedText>
       </ThemedView>
+      <ThemedView style={styles.stepContainer}>
+        <RWMListItem />
+      </ThemedView>
+
+
+
     </ParallaxScrollView>
+
   );
 }
 
