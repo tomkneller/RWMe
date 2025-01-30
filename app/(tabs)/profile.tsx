@@ -6,6 +6,8 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Avatar } from '@rneui/themed';
+import { AirbnbRating } from '@rneui/themed';
 
 export default function Profile() {
 
@@ -56,13 +58,24 @@ export default function Profile() {
 
   return (
     <ThemedView>
-      <Image source={require('@/assets/images/avatar.png')} style={{ height: 150, width: 150 }} />
+      <Avatar
+        size={150}
+        rounded
+        source={require('@/assets/images/avatar.png')}
+        title="BP"
+        containerStyle={{ backgroundColor: "blue" }}
+      />
       <ThemedText type="title">{accountName}</ThemedText>
       <ThemedText>Account Created: {accountCreated}</ThemedText>
-      <ThemedText>****</ThemedText>
+      <AirbnbRating
+        isDisabled={true}
+        defaultRating={accountRating}
+        size={12}
+      />
       <ThemedText>Rating: {accountRating}/5</ThemedText>
       <Button title='Send a message'></Button>
       <Button title='View Meetups'></Button>
+      <ThemedText type="subtitle">Reviews</ThemedText>
       <FlatList
         data={DATA}
         renderItem={({ item }) => <Item title={item.title} content={item.content} rating={item.rating} />}
