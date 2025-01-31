@@ -6,11 +6,8 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { router } from 'expo-router';
 
-export default function DevTools({ navigation }) {
+export default function CreateARoute() {
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
@@ -22,11 +19,7 @@ export default function DevTools({ navigation }) {
           style={styles.headerImage}
         />
       }>
-
-      <Button title='Create Route Listing' onPress={() => { router.push("/createaroute") }} />
-      <Button title='Create User Account' onPress={() => { router.push("/createaccount") }} />
-      <Button title='View User Profile' onPress={() => { router.push("/profile") }} />
-
+      <ThemedText type='title'>Create a new Route</ThemedText>
     </ParallaxScrollView>
   );
 }
