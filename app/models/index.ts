@@ -6,11 +6,11 @@ export type UserAccount = {
 };
 
 export type Route = {
-    id: number;
-    name: string;
+    idroutes: number;
+    routeName: string;
     lat: number;
     long: number;
     distance: number;
     pace: string;
-    hostname: string;
+    hostName: string;
 }

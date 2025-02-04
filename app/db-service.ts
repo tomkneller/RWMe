@@ -1,106 +1,56 @@
-import * as SQLite from 'expo-sqlite';
-import { UserAccount } from './models';
+import axios from 'axios';
 
-const tableName = 'userData';
-
-export const getDBConnection = async () => {
-    return SQLite.openDatabaseAsync('user-data.db');
+/**
+ * Get all users from users database
+ */
+export const getUsers = async () => {
+    try {
+        const response = await axios.get('http://192.168.1.112:5000/api/users');
+        console.log(response.data); // The user data from the database
+    } catch (error) {
+        console.error('Error fetching users:', error);
+    }
 };
 
-export const createTable = async (db: SQLite.Database) => {
-    return new Promise((resolve, reject) => {
-        db.withTransactionAsync(tx => {
-            tx.executeSql(
-                `CREATE TABLE IF NOT EXISTS ${tableName} (
-              name TEXT NOT NULL,
-              email TEXT,
-              phoneNo INTEGER
-            );`,
-                [],
-                () => resolve(),
-                (_, error) => {
-                    reject(error);
-                    return true; // Important for error handling in transactions
-                }
-            );
-        });
-    });
+/**
+ * Create a new user in the users database
+ * @param name users full name
+ * @param email users email address
+ * @param phoneNo users phone number
+ */
+export const createUser = async (name: Text, email: Text, phoneNo: Number) => {
+    try {
+        const response = await axios.post('http://192.168.1.112:5000/api/users', { name, email, phoneNo });
+        console.log(response.data); // Success message and user ID
+    } catch (error) {
+        console.error("Error creating user:", error);
+    }
 };
 
-export const getUsers = async (db: SQLite.Database): Promise<UserAccount[]> => {
-    return new Promise((resolve, reject) => {
-        db.withTransactionAsync(tx => {
-            tx.executeSql(
-                `SELECT rowid AS id, name, email, phoneNo FROM ${tableName}`,
-                [],
-                (_, results) => {
-
-                    const userAccs: UserAccount[] = [];
-                    for (let i = 0; i < results.rows.length; i++) {
-                        userAccs.push(results.rows.item(i));
-                    }
-                    resolve(userAccs);
-                },
-                (_, error) => {
-                    reject(error);
-                    return true;
-                }
-            );
-        });
-    });
+//Get all routes from routes database
+export const getRoutes = async () => {
+    try {
+        const response = await axios.get('http://192.168.1.112:5000/api/routes');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching users:', error);
+    }
 };
 
-export const saveUsers = async (db: SQLite.Database, userAccs: UserAccount[]) => {
-    return new Promise((resolve, reject) => {
-        db.withTransactionAsync(tx => {
-            userAccs.forEach(user => {
-                console.log(user);
-
-                tx.executeSql(
-                    `INSERT OR REPLACE INTO ${tableName} (rowid, name, email, phoneNo) VALUES (?, ?, ?, ?)`,
-                    [user.id, user.name, user.email, user.phoneNo],
-                    () => { },
-                    (_, error) => {
-                        reject(error);
-                        return true;
-                    }
-                );
-            });
-            resolve();
-        });
-    });
-};
-
-
-
-export const deleteUser = async (db: SQLite.Database, id: number) => {
-    return new Promise((resolve, reject) => {
-        db.withTransactionAsync(tx => {
-            tx.executeSql(
-                `DELETE FROM ${tableName} WHERE rowid = ?`, // Parameterized query
-                [id],
-                () => resolve(),
-                (_, error) => {
-                    reject(error);
-                    return true;
-                }
-            );
-        });
-    });
-};
-
-export const deleteTable = async (db: SQLite.Database) => {
-    return new Promise((resolve, reject) => {
-        db.transaction(tx => {
-            tx.executeSql(
-                `DROP TABLE IF EXISTS ${tableName}`, // Add IF EXISTS to avoid errors if table doesn't exist
-                [],
-                () => resolve(),
-                (_, error) => {
-                    reject(error);
-                    return true;
-                }
-            );
-        });
-    });
+/**
+ * Create a new route in the routes database
+ * @param name name of the route
+ * @param distance distance (in miles) of the route
+ * @param pace pace of the route (should be in format 00:00)
+ * @param lat latitude of route start location
+ * @param long longitude of route start location
+ * @param hostname Username of route host
+ */
+export const createRoute = async (name: Text, distance: Number, pace: Text, lat: Number, long: Number, hostname: Text) => {
+    try {
+        const response = await axios.post('http://192.168.1.112:5000/api/routes', { name, distance, pace, lat, long, hostname });
+        console.log(response.data); // Success message and route ID
+    } catch (error) {
+        console.error("Error creating user:", error);
+    }
 };
