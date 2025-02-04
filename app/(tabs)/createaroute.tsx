@@ -6,6 +6,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as DocumentPicker from 'expo-document-picker';
 import { Picker } from '@react-native-picker/picker';
+import { createRoute } from '../db-service';
 
 export default function CreateARoute() {
   const [date, setDate] = useState(new Date(1598051730000));
@@ -31,6 +32,8 @@ export default function CreateARoute() {
   const showTimepicker = () => {
     showMode('time');
   };
+
+
 
   return (
     <ParallaxScrollView
@@ -65,7 +68,7 @@ export default function CreateARoute() {
       <Button onPress={showDatepicker} title="Show date picker!" />
       <Button onPress={showTimepicker} title="Show time picker!" />
       <ThemedText>selected: {date.toLocaleString()}</ThemedText>
-      {show && (
+      {/* {show && (
         <DateTimePicker
           testID="dateTimePicker"
           value={date}
@@ -74,7 +77,7 @@ export default function CreateARoute() {
           onChange={onChange}
           minimumDate={new Date(2025, 6, 1)} //TODO: change to todays date
         />
-      )}
+      )} */}
 
       {/* TODO: Terrain Type (app could smart select this based on gpx) */}
       <ThemedText type='subtitle'>Terrain Type</ThemedText>
@@ -91,6 +94,8 @@ export default function CreateARoute() {
         <Picker.Item label="Mixed" value="mixed" />
 
       </Picker>
+
+      <Button title='Create' onPress={() => { createRoute("test", 1, "01:23", 123, 456, "Name") }} />
 
     </ParallaxScrollView>
   );

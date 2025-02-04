@@ -18,7 +18,7 @@ export const getUsers = async () => {
  * @param email users email address
  * @param phoneNo users phone number
  */
-export const createUser = async (name: Text, email: Text, phoneNo: Number) => {
+export const createUser = async (name: String, email: String, phoneNo: Number) => {
     try {
         const response = await axios.post('http://192.168.1.112:5000/api/users', { name, email, phoneNo });
         console.log(response.data); // Success message and user ID
@@ -33,7 +33,7 @@ export const getRoutes = async () => {
         const response = await axios.get('http://192.168.1.112:5000/api/routes');
         return response.data;
     } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching routes:', error);
     }
 };
 
@@ -46,11 +46,11 @@ export const getRoutes = async () => {
  * @param long longitude of route start location
  * @param hostname Username of route host
  */
-export const createRoute = async (name: Text, distance: Number, pace: Text, lat: Number, long: Number, hostname: Text) => {
+export const createRoute = async (name: String, distance: Number, pace: String, lat: Number, long: Number, hostname: String) => {
     try {
         const response = await axios.post('http://192.168.1.112:5000/api/routes', { name, distance, pace, lat, long, hostname });
         console.log(response.data); // Success message and route ID
     } catch (error) {
-        console.error("Error creating user:", error);
+        console.error("Error creating routes:", error);
     }
 };

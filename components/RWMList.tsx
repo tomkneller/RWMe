@@ -3,13 +3,16 @@ import { RWMListItem } from '@/components/RWMListItem';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Route } from '../app/models';
 import { getRoutes } from '../app/db-service';
-
+import { RefreshControl, ScrollView } from 'react-native';
 
 export function RWMList() {
     const [routes, setRoutes] = useState<Route[]>([]);
     const [newRouteName, setNewRouteName] = useState('');
+    const [refreshing, setRefreshing] = useState(false); // State for refreshing
 
     const loadDataCallback = useCallback(async () => {
+        setRefreshing(true); // Set refreshing to true before fetching data
+
         try {
             console.log("get routes");
             console.log(await getRoutes());
@@ -17,6 +20,8 @@ export function RWMList() {
 
         } catch (error) {
             console.error("Error loading data:", error);
+        } finally {
+            setRefreshing(false); // Set refreshing to false after data is fetched (or error occurs)
         }
     }, []);
 
@@ -24,11 +29,20 @@ export function RWMList() {
         loadDataCallback();
     }, [loadDataCallback]);
 
+    const onRefresh = useCallback(() => { // Function for pull-to-refresh
+        console.log("Refresh");
+
+        loadDataCallback();
+    }, [loadDataCallback]);
+
     return (
-        <ThemedView>
+        <ScrollView
+            refreshControl={ // Add RefreshControl as a prop
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
             {routes.map((route) => (
                 <RWMListItem key={route.idroutes} routeData={route} />
             ))}
-        </ThemedView>
-    )
+        </ScrollView >
+    );
 }

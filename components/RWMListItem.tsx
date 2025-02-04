@@ -24,7 +24,6 @@ export const RWMListItem: React.FC<{
             <ThemedText id='routePace'>{pace} min/mi</ThemedText>
             <ThemedText type='defaultSemiBold'>Hosted by:</ThemedText>
             <ThemedText id='routeHost'>{hostName}</ThemedText>
-            {/* </Collapsible> */}
         </ThemedView>
     );
 };
