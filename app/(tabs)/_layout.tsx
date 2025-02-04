@@ -50,6 +50,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="createaccount"
         options={{
+          href: null,
           title: 'Create Acc',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
@@ -57,6 +58,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="createaroute"
         options={{
+          href: null,
           title: 'Create RT',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}

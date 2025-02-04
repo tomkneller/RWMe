@@ -4,8 +4,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Route } from '../app/models';
 import { getRoutes } from '../app/db-service';
 import { RefreshControl, ScrollView } from 'react-native';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 
 export function RWMList() {
+    const insets = useSafeAreaInsets();
+
     const [routes, setRoutes] = useState<Route[]>([]);
     const [newRouteName, setNewRouteName] = useState('');
     const [refreshing, setRefreshing] = useState(false); // State for refreshing

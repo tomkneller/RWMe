@@ -1,4 +1,4 @@
-import { StyleSheet, Button, TextInput } from 'react-native';
+import { StyleSheet, Button, TextInput, View } from 'react-native';
 import React, { useState } from 'react'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
@@ -12,12 +12,33 @@ export default function CreateARoute() {
   const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
+
+  const [routeNameText, setRouteNameText] = useState('');
+
   const [selectedTerrainType, setSelectedTerrainType] = useState();
+  const [routeDistance, setRouteDistance] = useState(0);
+  const [routeStartLat, setRouteStartLat] = useState(0);
+  const [routeStartLong, setRouteStartLong] = useState(0);
+
+  const [routePaceMins, setRoutePaceMins] = useState('');
+  const [routePaceSeconds, setRoutePaceSeconds] = useState('');
 
   const onChange = (event: any, selectedDate: any) => {
     const currentDate = selectedDate;
     setShow(false);
     setDate(currentDate);
+  };
+
+  const handleRouteNameChange = (newRouteName: String) => {
+    setRouteNameText(newRouteName); // Update the state with the new text
+  };
+
+  const handlePaceMinsChange = (newPaceMins: String) => {
+    setRoutePaceMins(newPaceMins);
+  };
+
+  const handlePaceSecondsChange = (newPaceSeconds: String) => {
+    setRoutePaceSeconds(newPaceSeconds);
   };
 
   const showMode = (currentMode) => {
@@ -33,6 +54,26 @@ export default function CreateARoute() {
     showMode('time');
   };
 
+
+  const handleSubmit = () => {
+    console.log("handle");
+
+    createRoute(routeNameText, 1, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, "currentuser")
+  }
+
+
+  const readGPXRouteDistance = () => {
+    //Placeholder TODO: Read the distance of the GPX Route
+
+    setRouteDistance(5);
+  }
+
+  const readGPXRouteStartLoc = () => {
+    //Placeholder TODO: Read the start location of GPX Route
+
+    setRouteStartLat(123);
+    setRouteStartLong(456);
+  }
 
 
   return (
@@ -50,18 +91,31 @@ export default function CreateARoute() {
 
       {/* TODO: Route Name (mandatory) */}
       <ThemedText type='subtitle'>Event Name</ThemedText>
-      <TextInput style={{ backgroundColor: 'white' }} placeholder='Route Name'></TextInput>
+      <TextInput style={{ backgroundColor: 'white' }} placeholder='Route Name' onChangeText={handleRouteNameChange} value={routeNameText}></TextInput>
 
       {/* TODO: select gpx file (optional?) 
       should display as a box with select a file option
       */}
       <ThemedText type='subtitle'>Choose a gpx file for the route</ThemedText>
-      <Button onPress={() => DocumentPicker.getDocumentAsync({ type: ["application/gpx", "application/tcx", "application/fit"] })} title='pick a file' />
+      <Button onPress={() => DocumentPicker.getDocumentAsync({
+        copyToCacheDirectory: true,
+        // type: ["application/gpx", "application/tcx", "application/fit"]
+      })}
+        title='pick a file'
+      />
 
 
       {/* TODO: picker for Pace range (mandatory) */}
       <ThemedText type='subtitle'>Select your estimated average pace</ThemedText>
-      <ThemedText type='default'>[pace range picker here]</ThemedText>
+      <View
+        style={{
+          flexDirection: 'row'
+        }}>
+        <TextInput style={{ backgroundColor: 'white' }} maxLength={2} inputMode='numeric' placeholder='00' onChangeText={handlePaceMinsChange} value={routePaceMins}></TextInput>
+        <ThemedText type='default'>:</ThemedText>
+        <TextInput style={{ backgroundColor: 'white' }} maxLength={2} inputMode='numeric' placeholder='00' onChangeText={handlePaceSecondsChange} value={routePaceSeconds}></TextInput>
+        <ThemedText type='default'>min/mi</ThemedText>
+      </View>
 
       {/* TODO: Start time (mandatory) - use time picker */}
       <ThemedText type='subtitle'>Time & Date</ThemedText>
@@ -95,7 +149,7 @@ export default function CreateARoute() {
 
       </Picker>
 
-      <Button title='Create' onPress={() => { createRoute("test", 1, "01:23", 123, 456, "Name") }} />
+      <Button title='Create' onPress={() => { handleSubmit() }} />
 
     </ParallaxScrollView>
   );
