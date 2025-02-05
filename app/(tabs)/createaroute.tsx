@@ -7,6 +7,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import * as DocumentPicker from 'expo-document-picker';
 import { Picker } from '@react-native-picker/picker';
 import { createRoute } from '../db-service';
+import { getStartCoordinates, calculateDistances } from '../gpxParsingUtils';
 
 export default function CreateARoute() {
   const [mode, setMode] = useState('date');
@@ -67,14 +68,21 @@ export default function CreateARoute() {
   const readGPXRouteDistance = () => {
     //Placeholder TODO: Read the distance of the GPX Route
 
-    setRouteDistance(5);
+    // setRouteDistance(5);
+
+    console.log("setting dist");
+    console.log(calculateDistances());
   }
 
   const readGPXRouteStartLoc = () => {
     //Placeholder TODO: Read the start location of GPX Route
 
-    setRouteStartLat(123);
-    setRouteStartLong(456);
+    // setRouteStartLat(123);
+    // setRouteStartLong(456);
+
+    console.log("setting start loc");
+    console.log(getStartCoordinates().lat);
+    console.log(getStartCoordinates().lon);
   }
 
 
@@ -106,6 +114,11 @@ export default function CreateARoute() {
         title='pick a file'
       />
 
+      <Button title='DEV: GPX Tester Loc' onPress={() => { readGPXRouteStartLoc() }} />
+      <Button title='DEV: GPX Tester Dist' onPress={() => { readGPXRouteDistance() }} />
+
+      <ThemedText type='default'>Distance: {calculateDistances()}</ThemedText>
+      <ThemedText type='default'>Start Loc: {getStartCoordinates().lat} {getStartCoordinates().lon}</ThemedText>
 
       {/* TODO: picker for Pace range (mandatory) */}
       <ThemedText type='subtitle'>Select your estimated average pace</ThemedText>
