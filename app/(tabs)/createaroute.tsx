@@ -9,21 +9,21 @@ import { Picker } from '@react-native-picker/picker';
 import { createRoute } from '../db-service';
 
 export default function CreateARoute() {
-  const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
 
   const [routeNameText, setRouteNameText] = useState('');
 
   const [selectedTerrainType, setSelectedTerrainType] = useState();
-  const [routeDistance, setRouteDistance] = useState(0);
-  const [routeStartLat, setRouteStartLat] = useState(0);
-  const [routeStartLong, setRouteStartLong] = useState(0);
+  const [routeDistance, setRouteDistance] = useState(5);
+  const [routeStartLat, setRouteStartLat] = useState(123);
+  const [routeStartLong, setRouteStartLong] = useState(456);
+  const [date, setDate] = useState(new Date(1598051730000));
 
-  const [routePaceMins, setRoutePaceMins] = useState('');
-  const [routePaceSeconds, setRoutePaceSeconds] = useState('');
+  const [routePaceMins, setRoutePaceMins] = useState('00');
+  const [routePaceSeconds, setRoutePaceSeconds] = useState('00');
 
-  const onChange = (event: any, selectedDate: any) => {
+  const onDateChange = (event: any, selectedDate: Date) => {
     const currentDate = selectedDate;
     setShow(false);
     setDate(currentDate);
@@ -58,7 +58,9 @@ export default function CreateARoute() {
   const handleSubmit = () => {
     console.log("handle");
 
-    createRoute(routeNameText, 1, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, "currentuser")
+    const submitDate = date.toISOString().slice(0, 19).replace('T', ' ');
+    console.log(submitDate);
+    createRoute(routeNameText, 1, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, submitDate, "currentuser")
   }
 
 
@@ -121,17 +123,17 @@ export default function CreateARoute() {
       <ThemedText type='subtitle'>Time & Date</ThemedText>
       <Button onPress={showDatepicker} title="Show date picker!" />
       <Button onPress={showTimepicker} title="Show time picker!" />
-      <ThemedText>selected: {date.toLocaleString()}</ThemedText>
-      {/* {show && (
+      <ThemedText>selected: {date.toISOString().slice(0, 19).replace('T', ' ')}</ThemedText>
+      {show && (
         <DateTimePicker
           testID="dateTimePicker"
           value={date}
           mode={mode}
           is24Hour={true}
-          onChange={onChange}
+          onChange={onDateChange}
           minimumDate={new Date(2025, 6, 1)} //TODO: change to todays date
         />
-      )} */}
+      )}
 
       {/* TODO: Terrain Type (app could smart select this based on gpx) */}
       <ThemedText type='subtitle'>Terrain Type</ThemedText>

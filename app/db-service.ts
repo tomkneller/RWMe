@@ -44,11 +44,14 @@ export const getRoutes = async () => {
  * @param pace pace of the route (should be in format 00:00)
  * @param lat latitude of route start location
  * @param long longitude of route start location
+ * @param dateTime Start date and time of event (format: YYYY-MM-DD HH:MM:SS)
  * @param hostname Username of route host
  */
-export const createRoute = async (name: String, distance: Number, pace: String, lat: Number, long: Number, hostname: String) => {
+export const createRoute = async (name: String, distance: Number, pace: String, lat: Number, long: Number, dateTime: String, hostname: String) => {
     try {
-        const response = await axios.post('http://192.168.1.112:5000/api/routes', { name, distance, pace, lat, long, hostname });
+        console.log("TEST: " + dateTime);
+
+        const response = await axios.post('http://192.168.1.112:5000/api/routes', { name, distance, pace, lat, long, dateTime, hostname });
         console.log(response.data); // Success message and route ID
     } catch (error) {
         console.error("Error creating routes:", error);

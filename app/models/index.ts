@@ -10,6 +10,7 @@ export type Route = {
     routeName: string;
     lat: number;
     long: number;
+    routeDateTime: string;
     distance: number;
     pace: string;
     hostName: string;
