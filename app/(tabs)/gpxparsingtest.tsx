@@ -47,10 +47,19 @@ export default function GPXParsingTest() {
 
   const [distances, setDistances] = useState([]);
   const [totalDistance, setTotalDistance] = useState(null);
+  const [startLat, setRouteStartLat] = useState('0');
+  const [startLong, setRouteStartLong] = useState('0');
 
 
   var XMLParser = require('react-xml-parser');
   var xml = new XMLParser().parseFromString(gpxfile);
+
+  const getStartCoordinates = () => {
+    setRouteStartLat(xml.getElementsByTagName('trkpt')[0].attributes.lat);
+    setRouteStartLong(xml.getElementsByTagName('trkpt')[0].attributes.lon);
+  }
+
+
   const calculateDistances = () => {
     const R = 6371; // Earth's radius in km
     const calculatedDistances = [];
@@ -105,8 +114,10 @@ export default function GPXParsingTest() {
       <Button
         title='Select GPX file'
       />
-      <Button title='Calculate Distance' onPress={calculateDistances}>Calculate</Button>
+      <Button title='Calculate Distance' onPress={calculateDistances}></Button>
+      <Button title='Get Start point' onPress={getStartCoordinates}></Button>
       <ThemedText>Total Distance: {totalDistance}</ThemedText>
+      <ThemedText>Start Point: Latitude:{startLat} Longitude:{startLong}</ThemedText>
     </ParallaxScrollView>
   );
 
