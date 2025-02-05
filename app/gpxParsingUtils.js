@@ -96,9 +96,6 @@ export function calculateDistances() {
     // setDistances(calculatedDistances);
     // setTotalDistance(total.toFixed(2));
 
-    return total.toFixed(2);
-
-    console.log(totalDistance);
-
+    return total;
 }
 

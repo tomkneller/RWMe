@@ -16,9 +16,9 @@ export default function CreateARoute() {
   const [routeNameText, setRouteNameText] = useState('');
 
   const [selectedTerrainType, setSelectedTerrainType] = useState();
-  const [routeDistance, setRouteDistance] = useState(5);
-  const [routeStartLat, setRouteStartLat] = useState(123);
-  const [routeStartLong, setRouteStartLong] = useState(456);
+  let [routeDistance, setRouteDistance] = useState(5);
+  let [routeStartLat, setRouteStartLat] = useState(123);
+  let [routeStartLong, setRouteStartLong] = useState(456);
   const [date, setDate] = useState(new Date(1598051730000));
 
   const [routePaceMins, setRoutePaceMins] = useState('00');
@@ -59,9 +59,15 @@ export default function CreateARoute() {
   const handleSubmit = () => {
     console.log("handle");
 
-    const submitDate = date.toISOString().slice(0, 19).replace('T', ' ');
-    console.log(submitDate);
-    createRoute(routeNameText, 1, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, submitDate, "currentuser")
+    const startDate = date.toISOString().slice(0, 19).replace('T', ' ');
+    console.log(startDate);
+
+    readGPXRouteDistance();
+    console.log(routeDistance);
+
+    readGPXRouteStartLoc();
+
+    createRoute(routeNameText, routeDistance, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, startDate, "currentuser")
   }
 
 
@@ -72,17 +78,21 @@ export default function CreateARoute() {
 
     console.log("setting dist");
     console.log(calculateDistances());
+
+    setRouteDistance(calculateDistances());
   }
 
   const readGPXRouteStartLoc = () => {
     //Placeholder TODO: Read the start location of GPX Route
 
-    // setRouteStartLat(123);
-    // setRouteStartLong(456);
+
 
     console.log("setting start loc");
     console.log(getStartCoordinates().lat);
     console.log(getStartCoordinates().lon);
+
+    setRouteStartLat(getStartCoordinates().lat);
+    setRouteStartLong(getStartCoordinates().lon);
   }
 
 
@@ -117,7 +127,7 @@ export default function CreateARoute() {
       <Button title='DEV: GPX Tester Loc' onPress={() => { readGPXRouteStartLoc() }} />
       <Button title='DEV: GPX Tester Dist' onPress={() => { readGPXRouteDistance() }} />
 
-      <ThemedText type='default'>Distance: {calculateDistances()}</ThemedText>
+      <ThemedText type='default'>Distance: {calculateDistances().toFixed(2)}</ThemedText>
       <ThemedText type='default'>Start Loc: {getStartCoordinates().lat} {getStartCoordinates().lon}</ThemedText>
 
       {/* TODO: picker for Pace range (mandatory) */}
