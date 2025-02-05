@@ -26,6 +26,7 @@ export default function DevTools({ navigation }) {
       <Button title='Create Route Listing' onPress={() => { router.push("/createaroute") }} />
       <Button title='Create User Account' onPress={() => { router.push("/createaccount") }} />
       <Button title='View User Profile' onPress={() => { router.push("/profile") }} />
+      <Button title='GPX Parsing Test' onPress={() => { router.push("/gpxparsingtest") }} />
 
     </ParallaxScrollView>
   );
