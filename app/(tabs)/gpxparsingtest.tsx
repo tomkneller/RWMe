@@ -116,7 +116,7 @@ export default function GPXParsingTest() {
       />
       <Button title='Calculate Distance' onPress={calculateDistances}></Button>
       <Button title='Get Start point' onPress={getStartCoordinates}></Button>
-      <ThemedText>Total Distance: {totalDistance}</ThemedText>
+      <ThemedText>Total Distance: {totalDistance} km</ThemedText>
       <ThemedText>Start Point: Latitude:{startLat} Longitude:{startLong}</ThemedText>
     </ParallaxScrollView>
   );
