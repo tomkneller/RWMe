@@ -17,7 +17,7 @@ export default function MapViewer() {
   const [error, setError] = useState(null);
   const [routes, setRoutes] = useState();
   const [markers, setProcessedMarkers] = useState([]);
-
+  const [selectedMarker, setSelectedMarker] = useState(null);
 
 
   //TODO: Placeholder marker structures,should retrieve from db within filtered ranges to improve performance
@@ -27,16 +27,22 @@ export default function MapViewer() {
       try {
         const routeData = await getRoutes();
         // setRoutes(routeData);
-        const processedMarkers = routeData.map((route: { idroutes: any; routeName: any; hostName: any; lat: any; longi: any; }) => {
+        const processedMarkers = routeData.map((route: { idroutes: any; routeName: any; hostName: any; lat: any; longi: any; distance: any; pace: any; routeDateTime: any }) => {
+          console.log(routeData);
+
           return {
             id: route.idroutes,
-            title: route.routeName + " " + "25km",
+            title: route.routeName,
             description: "Hosted By:" + route.hostName,
             latlng: {
               latitude: route.lat,
               longitude: route.longi
-            }
+            },
 
+            distance: route.distance,
+            pace: route.pace,
+            hostName: route.hostName,
+            dateTime: route.routeDateTime
           };
         });
         setProcessedMarkers(processedMarkers);
@@ -53,7 +59,13 @@ export default function MapViewer() {
     fetchRoutes();
   }, []);
 
+  const handleMarkerPress = (marker) => {
+    setSelectedMarker(marker);
+  };
 
+  const handleMapPress = () => {
+    setSelectedMarker(null);
+  };
 
   const styles = StyleSheet.create({
     container: {
@@ -76,7 +88,9 @@ export default function MapViewer() {
           longitude: -122.4324,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
-        }} >
+        }}
+        onPress={handleMapPress} // Deselect on map press
+      >
         {markers.map((route) => (
           <Marker
             key={route.id}
@@ -86,12 +100,21 @@ export default function MapViewer() {
             }}
             title={route.title}
             description={route.description}
+            onPress={() => handleMarkerPress(route)}
           >
           </Marker>
         ))}
 
       </MapView>
-      <MapMarkerDetails routename='routename' distance='placeholderdist' pace='00:00' hostName='hostname' dateTime='sunday' distanceAway='100' />
+      {selectedMarker && (
+        <MapMarkerDetails
+          routename={selectedMarker.title}
+          distance={selectedMarker.distance}
+          pace={selectedMarker.pace}
+          hostName={selectedMarker.hostName}
+          dateTime={selectedMarker.dateTime}
+          distanceAway='100' />
+      )}
     </View>
   );
 }
