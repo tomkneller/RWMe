@@ -1,4 +1,4 @@
-import { StyleSheet, Image, Platform } from 'react-native';
+import { StyleSheet, Image, Platform, View } from 'react-native';
 
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
@@ -6,10 +6,11 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import MapView from 'react-native-maps';
+import MapView, { Callout } from 'react-native-maps';
 import { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 import { getRoutes } from '../db-service'
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { MapMarkerDetails } from '@/components/MapMarkerDetails';
 
 export default function MapViewer() {
   const [loading, setLoading] = useState(true);
@@ -29,8 +30,8 @@ export default function MapViewer() {
         const processedMarkers = routeData.map((route: { idroutes: any; routeName: any; hostName: any; lat: any; longi: any; }) => {
           return {
             id: route.idroutes,
-            title: route.routeName,
-            description: route.hostName,
+            title: route.routeName + " " + "25km",
+            description: "Hosted By:" + route.hostName,
             latlng: {
               latitude: route.lat,
               longitude: route.longi
@@ -52,11 +53,11 @@ export default function MapViewer() {
     fetchRoutes();
   }, []);
 
+
+
   const styles = StyleSheet.create({
     container: {
       ...StyleSheet.absoluteFillObject,
-      height: 400,
-      width: 400,
       justifyContent: 'flex-end',
       alignItems: 'center',
     },
@@ -65,33 +66,44 @@ export default function MapViewer() {
     },
   });
   return (
-    <MapView
-      style={styles.map}
+    <View style={styles.container}>
+      <MapView
+        style={styles.map}
 
-      provider={PROVIDER_GOOGLE}
-      initialRegion={{
-        latitude: 37.78825,
-        longitude: -122.4324,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      }} >
-      {markers.map((route) => (
-        <Marker
-          key={route.id}
-          coordinate={{
-            latitude: route.latlng.latitude,
-            longitude: route.latlng.longitude
-          }}
-          title={route.title}
-          description={route.description}
-        />
-      ))}
-    </MapView>
+        provider={PROVIDER_GOOGLE}
+        initialRegion={{
+          latitude: 37.78825,
+          longitude: -122.4324,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }} >
+        {markers.map((route) => (
+          <Marker
+            key={route.id}
+            coordinate={{
+              latitude: route.latlng.latitude,
+              longitude: route.latlng.longitude
+            }}
+            title={route.title}
+            description={route.description}
+          >
+          </Marker>
+        ))}
 
+      </MapView>
+      <MapMarkerDetails routename='routename' distance='placeholderdist' pace='00:00' hostName='hostname' dateTime='sunday' distanceAway='100' />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
   headerImage: {
     color: '#808080',
     bottom: -90,
