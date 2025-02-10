@@ -8,12 +8,34 @@ import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Avatar } from '@rneui/themed';
 import { AirbnbRating } from '@rneui/themed';
+import AuthContext from '../AuthContext';
+import { useContext } from 'react';
+import { router } from 'expo-router';
+
 
 export default function Profile() {
+  const { user } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext); // Access the logout function from the context
 
-  const accountName = 'Bob Placeholder'
+  let accountName = "placeholder";
   const accountCreated = '01/01/2025';
   const accountRating = 4;
+
+  if (user) {
+    accountName = user.name;
+  }
+
+  const handleLogout = async () => {
+
+    try {
+      await logout(); // Call the logout function from the context
+      router.push("/(tabs)/loginScreen"); // Navigate after successful login
+    } catch (error) {
+      console.error("LogoutError:", error);
+      Alert.alert('Error', error.message);
+    }
+
+  };
 
   //TODO: Placeholder Data: move this to pull from database
   const DATA = [
@@ -75,6 +97,7 @@ export default function Profile() {
       <ThemedText>Rating: {accountRating}/5</ThemedText>
       <Button title='Send a message'></Button>
       <Button title='View Meetups'></Button>
+      <Button title="Log Out" onPress={handleLogout} />
       <ThemedText type="subtitle">Reviews</ThemedText>
       <FlatList
         data={DATA}
