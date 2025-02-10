@@ -48,7 +48,7 @@ const LoginScreen = ({ navigation }) => {  // You might receive the navigation p
             />
             <Button title="Login" onPress={handleLogin} disabled={isLoading} />
 
-            {isLoading && <ActivityIndicator size="small" color="#0000ff" />} {/* Loading indicator */}
+            {isLoading && <ActivityIndicator size="small" color="#0000ff" />}
 
         </View>
     );
