@@ -1,16 +1,14 @@
 import { useContext, useState } from "react";
-import { Button, TextInput, View, StyleSheet, ActivityIndicator } from "react-native";
+import { Button, TextInput, View, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import AuthContext from '../AuthContext';
 import { router } from 'expo-router';
 
 
-const LoginScreen = ({ navigation }) => {  // You might receive the navigation prop
+const LoginScreen = () => {  // You might receive the navigation prop
     const [name, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false); // For loading indicator
     const { login } = useContext(AuthContext); // Access the login function from the context
-
-    const { user } = useContext(AuthContext);
 
     const handleLogin = async () => {
         setIsLoading(true); // Show loading indicator
@@ -25,9 +23,6 @@ const LoginScreen = ({ navigation }) => {  // You might receive the navigation p
         } finally {
             setIsLoading(false);
         }
-
-        console.log(user);
-
     };
 
     return (
