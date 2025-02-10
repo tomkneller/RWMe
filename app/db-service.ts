@@ -33,9 +33,6 @@ export const createUser = async (name: Text, email: Text, phoneNo: Number) => {
 
 export const apiLogin = async (userData) => {
     try {
-        console.log(userData);
-
-
         const response = await axios.post(`${API_BASE_URL}/users`, userData); // Your Express route
 
         if (response.status === 200) {  // Or appropriate success code

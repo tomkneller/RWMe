@@ -6,7 +6,7 @@ import { router } from 'expo-router';
 
 const LoginScreen = ({ navigation }) => {  // You might receive the navigation prop
     const [name, setUsername] = useState('');
-    const [email, setPassword] = useState('');
+    const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false); // For loading indicator
     const { login } = useContext(AuthContext); // Access the login function from the context
 
@@ -16,7 +16,7 @@ const LoginScreen = ({ navigation }) => {  // You might receive the navigation p
         setIsLoading(true); // Show loading indicator
 
         try {
-            const userData = { name, email }; // Prepare user data
+            const userData = { name, password }; // Prepare user data
             await login(userData); // Call the login function from the context
             router.push("/(tabs)/profile"); // Navigate after successful login
         } catch (error) {
@@ -43,7 +43,7 @@ const LoginScreen = ({ navigation }) => {  // You might receive the navigation p
                 style={styles.input}
                 placeholder="Password"
                 onChangeText={setPassword}
-                value={email}
+                value={password}
                 secureTextEntry
             />
             <Button title="Login" onPress={handleLogin} disabled={isLoading} />
