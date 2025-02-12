@@ -21,13 +21,14 @@ export const getUsers = async () => {
  * @param name users full name
  * @param email users email address
  * @param phoneNo users phone number
+ * @param password users chosen password
  */
-export const createUser = async (name: Text, email: Text, phoneNo: Number) => {
+export const createUser = async (name: string, email: string, phoneNo: Number, password: string) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/users`, { name, email, phoneNo });
+        const response = await axios.post(`${API_BASE_URL}/users/register`, { name, email, phoneNo, password });
         console.log(response.data); // Success message and user ID
     } catch (error) {
-        console.error("Error creating user:", error);
+        console.error("Error creating user:", error.response.data);
     }
 };
 
@@ -42,37 +43,30 @@ export const apiLogin = async (userData) => {
                 throw new Error("Invalid response from API. Missing tokens or user data.");
             }
 
-            // 1. Store tokens securely:
+            //Store tokens securely
             await SecureStore.setItemAsync('accessToken', accessToken);
             await SecureStore.setItemAsync('refreshToken', refreshToken);
             await SecureStore.setItemAsync('user', JSON.stringify(user)); // Store user object
 
 
-            // 2. Return user data (or just the tokens if you prefer to fetch user data later):
-            return { accessToken, refreshToken, user }; // or just { accessToken, refreshToken }
+            //Return user data
+            return { accessToken, refreshToken, user };
 
         } else {
             // Handle API errors (e.g., incorrect credentials)
-            const errorMessage = response.data.message || 'Login failed'; // Extract error message from API response
-            throw new Error(errorMessage); // Re-throw the error to be caught by the calling function
+            const errorMessage = response.data.message || 'Login failed';
+            throw new Error(errorMessage);
         }
     } catch (error) {
-
         if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            console.error("API Error:", error.response.data); // Log the error details from the server
-            throw new Error(error.response.data.message || "Login failed"); // Re-throw the error with a user-friendly message
+            console.error("API Error:", error.response.data);
+            throw new Error(error.response.data.message || "Login failed");
         } else if (error.request) {
-            // The request was made but no response was received
-            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-            // http.ClientRequest in node.js
             console.error("Request Error:", error.request);
-            throw new Error("No response from server"); // Re-throw the error
+            throw new Error("No response from server");
         } else {
-            // Something happened in setting up the request that triggered an Error
             console.error("Setup Error:", error.message);
-            throw new Error("Login request failed"); // Re-throw the error
+            throw new Error("Login request failed");
         }
     }
 }

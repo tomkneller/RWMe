@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, TextInput, Button } from 'react-native';
+import { Image, StyleSheet, Platform, TextInput, Button, Alert } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -9,61 +9,32 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { UserAccount } from '../models';
 import { getDBConnection, getUsers, saveUsers, createTable, deleteUser } from '../db-service';
 import { UserProfileComponent } from '../UserProfile';
+import { createUser } from '../db-service';
+import { router } from 'expo-router';
 
 export default function CreateAccount() {
     const [users, setUsers] = useState<UserAccount[]>([]);
     const [newUserName, setNewUserName] = useState('');
     const [newUserEmail, setNewUserEmail] = useState('');
-    const [newUserPhone, setNewUserPhone] = useState(0);  // Make sure this is used somewhere, even if commented out
+    const [newUserPhone, setNewUserPhone] = useState(0);
+    const [newUserPassword, setNewUserPassword] = useState('');
 
-    const loadDataCallback = useCallback(async () => {
-        try {
-            const db = await getDBConnection();
-            await createTable(db);
-            const storedUsers = await getUsers(db);
-            if (storedUsers.length) {
-                console.log("stored users");
+    const [isLoading, setIsLoading] = useState(false);
 
-                setUsers(storedUsers);
-            } else {
-                const initUsers = [{ id: 1, name: 'go to shop', email: 'test@yahoo.com', phoneNo: 12391231 }]; // Start ID at 1
-                await saveUsers(db, initUsers);
-                setUsers(initUsers);
-            }
-        } catch (error) {
-            console.error("Error loading data:", error);
-        }
-    }, []);
-
-    useEffect(() => {
-        loadDataCallback();
-    }, [loadDataCallback]);
-
-    const addUser = async () => {
-        if (!newUserName.trim()) return;
+    const handleCreateAccount = async () => {
+        setIsLoading(true); // Show loading indicator
 
         try {
-            const db = await getDBConnection();
+            router.push("/(tabs)/profile"); // Navigate after successful login
 
-            // Get the next available ID (important for avoiding conflicts)
-            const nextId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1;  // Start at 1
-            const newUser: UserAccount = {
-                id: nextId,
-                name: newUserName,
-                email: newUserEmail,
-                phoneNo: newUserPhone, // Use the phone number state here
-            };
+            createUser(newUserName, newUserEmail, newUserPhone, newUserPassword)
 
-            const newUsers = [...users, newUser];
-            setUsers(newUsers);
-            await saveUsers(db, [newUser]); // Save only the new user
-
-            setNewUserName('');
-            setNewUserEmail(''); // Clear email input as well
-            setNewUserPhone(0); // Clear phone input if used
-
+            //await login(userData); // Call the login function
         } catch (error) {
-            console.error("Error adding user:", error);
+            console.error("Login Error:", error);
+            Alert.alert('Error', error.message);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -94,9 +65,10 @@ export default function CreateAccount() {
                 <TextInput value={newUserName} onChangeText={text => setNewUserName(text)} style={styles.whiteBackground} placeholder='Full Name' />
                 <TextInput keyboardType='email-address' value={newUserEmail} onChangeText={text => setNewUserEmail(text)} style={styles.whiteBackground} placeholder='Email' />
                 <TextInput keyboardType='number-pad' onChangeText={no => setNewUserPhone(Number(no))} style={styles.whiteBackground} placeholder='Phone No.' />
+                <TextInput passwordRules={"required: upper; minlength: 8;"} value={newUserPassword} onChangeText={password => setNewUserPassword(password)} style={styles.whiteBackground} />
                 <Button
                     title='Create Account'
-                    onPress={addUser}
+                    onPress={handleCreateAccount}
                 />
             </ThemedView>
             <ThemedView>
