@@ -9,6 +9,7 @@ import { Picker } from '@react-native-picker/picker';
 import { createRoute } from '../db-service';
 import { getStartCoordinates, calculateDistances } from '../gpxParsingUtils';
 import * as FileSystem from 'expo-file-system';
+import { router } from 'expo-router';
 
 export default function CreateARoute() {
   const [mode, setMode] = useState('date');
@@ -64,7 +65,7 @@ export default function CreateARoute() {
   };
 
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log("handle");
 
     const startDate = date.toISOString().slice(0, 19).replace('T', ' ');
@@ -75,7 +76,9 @@ export default function CreateARoute() {
 
     readGPXRouteStartLoc();
 
-    createRoute(routeNameText, routeDistance, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, startDate, "currentuser")
+    await createRoute(routeNameText, routeDistance, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, startDate, "currentuser")
+
+    router.push("/"); // Navigate home after successful route creation
   }
 
   const readGPXRouteDistance = () => {
