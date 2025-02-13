@@ -1,5 +1,5 @@
 import { StyleSheet, Button, TextInput, View } from 'react-native';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -8,6 +8,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import { Picker } from '@react-native-picker/picker';
 import { createRoute } from '../db-service';
 import { getStartCoordinates, calculateDistances } from '../gpxParsingUtils';
+import * as FileSystem from 'expo-file-system';
 
 export default function CreateARoute() {
   const [mode, setMode] = useState('date');
@@ -16,13 +17,20 @@ export default function CreateARoute() {
   const [routeNameText, setRouteNameText] = useState('');
 
   const [selectedTerrainType, setSelectedTerrainType] = useState();
-  let [routeDistance, setRouteDistance] = useState(5);
-  let [routeStartLat, setRouteStartLat] = useState(123);
-  let [routeStartLong, setRouteStartLong] = useState(456);
+  let [routeDistance, setRouteDistance] = useState(0);
+  let [routeStartLat, setRouteStartLat] = useState(0);
+  let [routeStartLong, setRouteStartLong] = useState(0);
   const [date, setDate] = useState(new Date(1598051730000));
+  const [fileContent, setFileContent] = useState('');
 
   const [routePaceMins, setRoutePaceMins] = useState('00');
   const [routePaceSeconds, setRoutePaceSeconds] = useState('00');
+
+  useEffect(() => {
+    if (fileContent) { // Check if fileContent has been updated (is not null)
+      updateStartDist();
+    }
+  }, [fileContent]);
 
   const onDateChange = (event: any, selectedDate: Date) => {
     const currentDate = selectedDate;
@@ -30,19 +38,19 @@ export default function CreateARoute() {
     setDate(currentDate);
   };
 
-  const handleRouteNameChange = (newRouteName: String) => {
+  const handleRouteNameChange = (newRouteName: string) => {
     setRouteNameText(newRouteName); // Update the state with the new text
   };
 
-  const handlePaceMinsChange = (newPaceMins: String) => {
+  const handlePaceMinsChange = (newPaceMins: string) => {
     setRoutePaceMins(newPaceMins);
   };
 
-  const handlePaceSecondsChange = (newPaceSeconds: String) => {
+  const handlePaceSecondsChange = (newPaceSeconds: string) => {
     setRoutePaceSeconds(newPaceSeconds);
   };
 
-  const showMode = (currentMode) => {
+  const showMode = (currentMode: string) => {
     setShow(true);
     setMode(currentMode);
   };
@@ -70,31 +78,43 @@ export default function CreateARoute() {
     createRoute(routeNameText, routeDistance, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, startDate, "currentuser")
   }
 
-
   const readGPXRouteDistance = () => {
-    //Placeholder TODO: Read the distance of the GPX Route
-
-    // setRouteDistance(5);
-
-    console.log("setting dist");
-    console.log(calculateDistances());
-
-    setRouteDistance(calculateDistances());
+    setRouteDistance(calculateDistances(fileContent));
   }
 
   const readGPXRouteStartLoc = () => {
-    //Placeholder TODO: Read the start location of GPX Route
-
-
-
-    console.log("setting start loc");
-    console.log(getStartCoordinates().lat);
-    console.log(getStartCoordinates().lon);
-
-    setRouteStartLat(getStartCoordinates().lat);
-    setRouteStartLong(getStartCoordinates().lon);
+    setRouteStartLat(getStartCoordinates(fileContent).lat);
+    setRouteStartLong(getStartCoordinates(fileContent).lon);
   }
 
+  async function getDocumentAsString() {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        copyToCacheDirectory: true,
+        type: ["application/octet-stream"]
+      });
+
+      //Checking if file selection was not cancelled
+      if (!result.canceled) {
+        const successResult = result as DocumentPicker.DocumentPickerSuccessResult;
+        const selectedFileContent = await fetch(successResult.assets[0].uri).then(r => r.text());
+        var XMLParser = require('react-xml-parser');
+        var xml = new XMLParser().parseFromString(selectedFileContent);
+        setFileContent(xml);
+      }
+      else {
+        console.log("file selection cancelled");
+
+      }
+    } catch (error) {
+      console.log("errored out", error);
+    }
+  }
+
+  function updateStartDist() {
+    readGPXRouteStartLoc();
+    readGPXRouteDistance();
+  }
 
   return (
     <ParallaxScrollView
@@ -117,18 +137,11 @@ export default function CreateARoute() {
       should display as a box with select a file option
       */}
       <ThemedText type='subtitle'>Choose a gpx file for the route</ThemedText>
-      <Button onPress={() => DocumentPicker.getDocumentAsync({
-        copyToCacheDirectory: true,
-        // type: ["application/gpx", "application/tcx", "application/fit"]
-      })}
+      <Button onPress={getDocumentAsString}
         title='pick a file'
       />
-
-      <Button title='DEV: GPX Tester Loc' onPress={() => { readGPXRouteStartLoc() }} />
-      <Button title='DEV: GPX Tester Dist' onPress={() => { readGPXRouteDistance() }} />
-
-      <ThemedText type='default'>Distance: {calculateDistances().toFixed(2)}</ThemedText>
-      <ThemedText type='default'>Start Loc: {getStartCoordinates().lat} {getStartCoordinates().lon}</ThemedText>
+      <ThemedText type='default'>Distance: {routeDistance}</ThemedText>
+      <ThemedText type='default'>Start Loc: {routeStartLat} {routeStartLong}</ThemedText>
 
       {/* TODO: picker for Pace range (mandatory) */}
       <ThemedText type='subtitle'>Select your estimated average pace</ThemedText>
