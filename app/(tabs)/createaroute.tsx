@@ -1,5 +1,5 @@
-import { StyleSheet, Button, TextInput, View } from 'react-native';
-import React, { useEffect, useState } from 'react'
+import { StyleSheet, Button, TextInput, View, Alert } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -10,6 +10,7 @@ import { createRoute } from '../db-service';
 import { getStartCoordinates, calculateDistances } from '../gpxParsingUtils';
 import * as FileSystem from 'expo-file-system';
 import { router } from 'expo-router';
+import AuthContext from '../AuthContext';
 
 export default function CreateARoute() {
   const [mode, setMode] = useState('date');
@@ -23,9 +24,17 @@ export default function CreateARoute() {
   let [routeStartLong, setRouteStartLong] = useState(0);
   const [date, setDate] = useState(new Date(1598051730000));
   const [fileContent, setFileContent] = useState('');
+  const [validationErrors, setValidationErrors] = useState(['']);
 
   const [routePaceMins, setRoutePaceMins] = useState('00');
   const [routePaceSeconds, setRoutePaceSeconds] = useState('00');
+
+  const { user } = useContext(AuthContext);
+  let accountName = "placeholder";
+
+  if (user) {
+    accountName = user.name;
+  }
 
   useEffect(() => {
     if (fileContent) { // Check if fileContent has been updated (is not null)
@@ -66,17 +75,39 @@ export default function CreateARoute() {
 
 
   const handleSubmit = async () => {
-    console.log("handle");
+    const errors: string[] = [];
 
     const startDate = date.toISOString().slice(0, 19).replace('T', ' ');
-    console.log(startDate);
 
-    readGPXRouteDistance();
-    console.log(routeDistance);
+    if (!routeNameText) {
+      errors.push("Route name is required");
+    }
+    if (!fileContent) {
+      errors.push("Route is required");
+    }
+    if (!routePaceMins || routePaceMins == '00') {
+      errors.push("Valid Pace is Required");
+    }
+    if (!startDate) {
+      errors.push("Valid start date and time required");
+    }
+    if (!currentUser) {
+      errors.push("You need to be logged in.");
+    }
 
-    readGPXRouteStartLoc();
 
-    await createRoute(routeNameText, routeDistance, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, startDate, "currentuser")
+    console.log(errors);
+
+    if (errors.length > 0) {
+      setValidationErrors(errors)
+
+      Alert.alert("Theres a problem", errors.toString())
+
+      return;
+    }
+
+    //TODO: Currently using current users name for accountname, should probably pass name from ID
+    await createRoute(routeNameText, routeDistance, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, startDate, accountName)
 
     router.push("/"); // Navigate home after successful route creation
   }
