@@ -23,7 +23,7 @@ export const getUsers = async () => {
  * @param phoneNo users phone number
  * @param password users chosen password
  */
-export const createUser = async (name: string, email: string, phoneNo: Number, password: string) => {
+export const createUser = async (name: string, email: string, phoneNo: string, password: string) => {
     try {
         const response = await axios.post(`${API_BASE_URL}/users/register`, { name, email, phoneNo, password });
         console.log(response.data); // Success message and user ID
