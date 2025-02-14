@@ -75,6 +75,8 @@ export default function CreateARoute() {
 
 
   const handleSubmit = async () => {
+    console.log("test");
+
     const errors: string[] = [];
 
     const startDate = date.toISOString().slice(0, 19).replace('T', ' ');
@@ -91,7 +93,7 @@ export default function CreateARoute() {
     if (!startDate) {
       errors.push("Valid start date and time required");
     }
-    if (!currentUser) {
+    if (!accountName) {
       errors.push("You need to be logged in.");
     }
 
