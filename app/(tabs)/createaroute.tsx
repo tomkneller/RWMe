@@ -1,5 +1,5 @@
-import { StyleSheet, Button, TextInput, View } from 'react-native';
-import React, { useState } from 'react'
+import { StyleSheet, Button, TextInput, View, Alert } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -8,6 +8,9 @@ import * as DocumentPicker from 'expo-document-picker';
 import { Picker } from '@react-native-picker/picker';
 import { createRoute } from '../db-service';
 import { getStartCoordinates, calculateDistances } from '../gpxParsingUtils';
+import * as FileSystem from 'expo-file-system';
+import { router } from 'expo-router';
+import AuthContext from '../AuthContext';
 
 export default function CreateARoute() {
   const [mode, setMode] = useState('date');
@@ -16,13 +19,30 @@ export default function CreateARoute() {
   const [routeNameText, setRouteNameText] = useState('');
 
   const [selectedTerrainType, setSelectedTerrainType] = useState();
-  let [routeDistance, setRouteDistance] = useState(5);
-  let [routeStartLat, setRouteStartLat] = useState(123);
-  let [routeStartLong, setRouteStartLong] = useState(456);
+  let [routeDistance, setRouteDistance] = useState(0);
+  let [routeStartLat, setRouteStartLat] = useState(0);
+  let [routeStartLong, setRouteStartLong] = useState(0);
   const [date, setDate] = useState(new Date(1598051730000));
+  const [fileContent, setFileContent] = useState('');
+  const [validationErrors, setValidationErrors] = useState(['']);
+
+  const [additionalDetails, setAdditionalDetails] = useState('');
 
   const [routePaceMins, setRoutePaceMins] = useState('00');
   const [routePaceSeconds, setRoutePaceSeconds] = useState('00');
+
+  const { user } = useContext(AuthContext);
+  let accountName = "placeholder";
+
+  if (user) {
+    accountName = user.name;
+  }
+
+  useEffect(() => {
+    if (fileContent) { // Check if fileContent has been updated (is not null)
+      updateStartDist();
+    }
+  }, [fileContent]);
 
   const onDateChange = (event: any, selectedDate: Date) => {
     const currentDate = selectedDate;
@@ -30,19 +50,23 @@ export default function CreateARoute() {
     setDate(currentDate);
   };
 
-  const handleRouteNameChange = (newRouteName: String) => {
+  const handleRouteNameChange = (newRouteName: string) => {
     setRouteNameText(newRouteName); // Update the state with the new text
   };
 
-  const handlePaceMinsChange = (newPaceMins: String) => {
+  const handlePaceMinsChange = (newPaceMins: string) => {
     setRoutePaceMins(newPaceMins);
   };
 
-  const handlePaceSecondsChange = (newPaceSeconds: String) => {
+  const handlePaceSecondsChange = (newPaceSeconds: string) => {
     setRoutePaceSeconds(newPaceSeconds);
   };
 
-  const showMode = (currentMode) => {
+  const handleDetailsChange = (newAdditionalDetails: string) => {
+    setAdditionalDetails(newAdditionalDetails); // Update the state with the new text
+  };
+
+  const showMode = (currentMode: string) => {
     setShow(true);
     setMode(currentMode);
   };
@@ -56,45 +80,83 @@ export default function CreateARoute() {
   };
 
 
-  const handleSubmit = () => {
-    console.log("handle");
+  const handleSubmit = async () => {
+    console.log("test");
+
+    const errors: string[] = [];
 
     const startDate = date.toISOString().slice(0, 19).replace('T', ' ');
-    console.log(startDate);
 
-    readGPXRouteDistance();
-    console.log(routeDistance);
+    if (!routeNameText) {
+      errors.push("Route name is required");
+    }
+    if (!fileContent) {
+      errors.push("Route is required");
+    }
+    if (!routePaceMins || routePaceMins == '00') {
+      errors.push("Valid Pace is Required");
+    }
+    if (!startDate) {
+      errors.push("Valid start date and time required");
+    }
+    if (!accountName) {
+      errors.push("You need to be logged in.");
+    }
 
-    readGPXRouteStartLoc();
 
-    createRoute(routeNameText, routeDistance, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, startDate, "currentuser")
+    console.log(errors);
+
+    if (errors.length > 0) {
+      setValidationErrors(errors)
+
+      Alert.alert("Theres a problem", errors.toString())
+
+      return;
+    }
+
+    //TODO: Currently using current users name for accountname, should probably pass name from ID
+    await createRoute(routeNameText, routeDistance, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, startDate, accountName, additionalDetails)
+
+    router.push("/"); // Navigate home after successful route creation
   }
 
-
   const readGPXRouteDistance = () => {
-    //Placeholder TODO: Read the distance of the GPX Route
-
-    // setRouteDistance(5);
-
-    console.log("setting dist");
-    console.log(calculateDistances());
-
-    setRouteDistance(calculateDistances());
+    setRouteDistance(calculateDistances(fileContent));
   }
 
   const readGPXRouteStartLoc = () => {
-    //Placeholder TODO: Read the start location of GPX Route
-
-
-
-    console.log("setting start loc");
-    console.log(getStartCoordinates().lat);
-    console.log(getStartCoordinates().lon);
-
-    setRouteStartLat(getStartCoordinates().lat);
-    setRouteStartLong(getStartCoordinates().lon);
+    setRouteStartLat(getStartCoordinates(fileContent).lat);
+    setRouteStartLong(getStartCoordinates(fileContent).lon);
   }
 
+  async function getDocumentAsString() {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        copyToCacheDirectory: true,
+        type: ["application/octet-stream"]
+      });
+
+      //Checking if file selection was not cancelled
+      if (!result.canceled) {
+        const successResult = result as DocumentPicker.DocumentPickerSuccessResult;
+        const selectedFileContent = await fetch(successResult.assets[0].uri).then(r => r.text());
+        var XMLParser = require('react-xml-parser');
+        var xml = new XMLParser().parseFromString(selectedFileContent);
+        setFileContent(xml);
+      }
+      else {
+        console.log("file selection cancelled");
+
+      }
+    } catch (error) {
+      console.log("errored out", error);
+    }
+  }
+
+  function updateStartDist() {
+    readGPXRouteStartLoc();
+    readGPXRouteDistance();
+  }
 
   return (
     <ParallaxScrollView
@@ -117,18 +179,11 @@ export default function CreateARoute() {
       should display as a box with select a file option
       */}
       <ThemedText type='subtitle'>Choose a gpx file for the route</ThemedText>
-      <Button onPress={() => DocumentPicker.getDocumentAsync({
-        copyToCacheDirectory: true,
-        // type: ["application/gpx", "application/tcx", "application/fit"]
-      })}
+      <Button onPress={getDocumentAsString}
         title='pick a file'
       />
-
-      <Button title='DEV: GPX Tester Loc' onPress={() => { readGPXRouteStartLoc() }} />
-      <Button title='DEV: GPX Tester Dist' onPress={() => { readGPXRouteDistance() }} />
-
-      <ThemedText type='default'>Distance: {calculateDistances().toFixed(2)}</ThemedText>
-      <ThemedText type='default'>Start Loc: {getStartCoordinates().lat} {getStartCoordinates().lon}</ThemedText>
+      <ThemedText type='default'>Distance: {routeDistance}</ThemedText>
+      <ThemedText type='default'>Start Loc: {routeStartLat} {routeStartLong}</ThemedText>
 
       {/* TODO: picker for Pace range (mandatory) */}
       <ThemedText type='subtitle'>Select your estimated average pace</ThemedText>
@@ -173,7 +228,15 @@ export default function CreateARoute() {
         <Picker.Item label="Mixed" value="mixed" />
 
       </Picker>
-
+      <TextInput style={{
+        backgroundColor: 'white'
+      }}
+        multiline
+        placeholder='any additional details?'
+        maxLength={512}
+        onChangeText={handleDetailsChange}
+        value={additionalDetails}
+      />
       <Button title='Create' onPress={() => { handleSubmit() }} />
 
     </ParallaxScrollView>

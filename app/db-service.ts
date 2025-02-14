@@ -93,7 +93,13 @@ export const getRoutes = async () => {
  */
 export const createRoute = async (name: String, distance: Number, pace: String, lat: Number, long: Number, dateTime: String, hostname: String) => {
     try {
+<<<<<<<< <Temporary merge branch 1
+        console.log("TEST: " + dateTime);
+
+        const response = await axios.post('http://192.168.1.112:5000/api/routes', { name, distance, pace, lat, long, dateTime, hostname });
+=========
         const response = await axios.post(`${API_BASE_URL}/routes`, { name, distance, pace, lat, long, hostname });
+>>>>>>>>> Temporary merge branch 2
         console.log(response.data); // Success message and route ID
     } catch (error) {
         console.error("Error creating routes:", error);
