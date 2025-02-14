@@ -26,6 +26,8 @@ export default function CreateARoute() {
   const [fileContent, setFileContent] = useState('');
   const [validationErrors, setValidationErrors] = useState(['']);
 
+  const [additionalDetails, setAdditionalDetails] = useState('');
+
   const [routePaceMins, setRoutePaceMins] = useState('00');
   const [routePaceSeconds, setRoutePaceSeconds] = useState('00');
 
@@ -58,6 +60,10 @@ export default function CreateARoute() {
 
   const handlePaceSecondsChange = (newPaceSeconds: string) => {
     setRoutePaceSeconds(newPaceSeconds);
+  };
+
+  const handleDetailsChange = (newAdditionalDetails: string) => {
+    setAdditionalDetails(newAdditionalDetails); // Update the state with the new text
   };
 
   const showMode = (currentMode: string) => {
@@ -109,7 +115,7 @@ export default function CreateARoute() {
     }
 
     //TODO: Currently using current users name for accountname, should probably pass name from ID
-    await createRoute(routeNameText, routeDistance, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, startDate, accountName)
+    await createRoute(routeNameText, routeDistance, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, startDate, accountName, additionalDetails)
 
     router.push("/"); // Navigate home after successful route creation
   }
@@ -222,7 +228,15 @@ export default function CreateARoute() {
         <Picker.Item label="Mixed" value="mixed" />
 
       </Picker>
-
+      <TextInput style={{
+        backgroundColor: 'white'
+      }}
+        multiline
+        placeholder='any additional details?'
+        maxLength={512}
+        onChangeText={handleDetailsChange}
+        value={additionalDetails}
+      />
       <Button title='Create' onPress={() => { handleSubmit() }} />
 
     </ParallaxScrollView>

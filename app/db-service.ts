@@ -91,9 +91,9 @@ export const getRoutes = async () => {
  * @param dateTime Start date and time of event (format: YYYY-MM-DD HH:MM:SS)
  * @param hostname Username of route host
  */
-export const createRoute = async (name: String, distance: Number, pace: String, lat: Number, long: Number, dateTime: String, hostname: String) => {
+export const createRoute = async (name: String, distance: Number, pace: String, lat: Number, long: Number, dateTime: String, hostname: String, additionalDetails: string) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/routes/create`, { name, distance, pace, lat, long, dateTime, hostname });
+        const response = await axios.post(`${API_BASE_URL}/routes/create`, { name, distance, pace, lat, long, dateTime, hostname, additionalDetails });
         console.log(response.data); // Success message and route ID
     } catch (error) {
         console.error("Error creating routes:", error);
