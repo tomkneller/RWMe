@@ -90,7 +90,7 @@ export const getRoutes = async () => {
  * @param long longitude of route start location
  * @param dateTime Start date and time of event (format: YYYY-MM-DD HH:MM:SS)
  * @param hostname Username of route host
- * @param additionalDetails additional details that the host can provide about the route
+ * @param additionalDetails additional details about the route that the user can provide
  */
 export const createRoute = async (name: String, distance: Number, pace: String, lat: Number, long: Number, dateTime: String, hostname: String, additionalDetails: string) => {
     try {
