@@ -9,8 +9,17 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { router } from 'expo-router';
+import { useContext } from 'react';
+import AuthContext from '../AuthContext';
+
 
 export default function DevTools({ navigation }) {
+  // const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
+  //console.log(user);
+
+  console.log(user);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
@@ -26,8 +35,7 @@ export default function DevTools({ navigation }) {
       <Button title='Create Route Listing' onPress={() => { router.push("/createaroute") }} />
       <Button title='Create User Account' onPress={() => { router.push("/createaccount") }} />
       <Button title='View User Profile' onPress={() => { router.push("/profile") }} />
-      <Button title='GPX Parsing Test' onPress={() => { router.push("/gpxparsingtest") }} />
-
+      <Button title='Login Screen' onPress={() => { router.push("/loginScreen") }} />
     </ParallaxScrollView>
   );
 }

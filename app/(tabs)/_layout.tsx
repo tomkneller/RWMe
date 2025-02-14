@@ -56,19 +56,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="createaroute"
+        name="loginScreen"
         options={{
-          href: null,
-          title: 'Create RT',
+          title: 'Login',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="gpxparsingtest"
-        options={{
           href: null,
-          title: 'Parsing Test',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
       />
       <Tabs.Screen
