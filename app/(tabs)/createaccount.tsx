@@ -25,7 +25,7 @@ export default function CreateAccount() {
     const [newUserVerifyPassword, setNewUserVerifyPassword] = useState('');
     const [validationErrors, setValidationErrors] = useState(['']);
     const [modalVisible, setModalVisible] = useState(false);
-
+    const [acceptTos, setAcceptTos] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const { login } = useContext(AuthContext); // Access the login function from the context
@@ -60,15 +60,27 @@ export default function CreateAccount() {
             errors.push("Passwords should match");
         }
 
+        if (!acceptTos) {
+            errors.push("You must accept the ToS to create an account");
+        }
+
         console.log(errors);
 
         console.log(newUserPhone);
+
+        // const listo = errors.map(error => { error + '\n' })
+
+        // console.log(listo);
 
 
         if (errors.length > 0) {
             setValidationErrors(errors)
 
-            Alert.alert("Theres a problem", errors.toString())
+            const result_string = errors.join("\n");
+            console.log(result_string)
+
+
+            Alert.alert("Theres a problem", result_string)
 
             return;
         }
@@ -147,6 +159,11 @@ export default function CreateAccount() {
 
     }
 
+    function setTosStatus(isChecked: boolean) {
+        console.log(isChecked);
+        setAcceptTos(isChecked);
+    }
+
     return (
         <ParallaxScrollView
             headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -198,7 +215,7 @@ export default function CreateAccount() {
                     placeholder='Repeat Password'
                 />
                 <View style={{ flexDirection: 'row' }}>
-                    <BouncyCheckbox fillColor="red" onPress={(isChecked: boolean) => { }} />
+                    <BouncyCheckbox fillColor="red" onPress={(isChecked: boolean) => { setTosStatus(isChecked) }} />
                     <ThemedText>Agree with
                         <ThemedText type='link' onPress={openToS}> Terms & Conditions</ThemedText>
                     </ThemedText>
