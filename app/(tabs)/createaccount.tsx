@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, TextInput, Button, Alert } from 'react-native';
+import { Image, StyleSheet, Platform, TextInput, Button, Alert, Text, View, Modal, Pressable, ScrollView, GestureResponderEvent } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -12,6 +12,9 @@ import { UserProfileComponent } from '../UserProfile';
 import { createUser } from '../db-service';
 import { router } from 'expo-router';
 import AuthContext from '../AuthContext';
+import { color } from '@rneui/base';
+import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { terms } from '@/assets/data/terms.json'
 
 export default function CreateAccount() {
     const [users, setUsers] = useState<UserAccount[]>([]);
@@ -21,6 +24,7 @@ export default function CreateAccount() {
     const [newUserPassword, setNewUserPassword] = useState('');
     const [newUserVerifyPassword, setNewUserVerifyPassword] = useState('');
     const [validationErrors, setValidationErrors] = useState(['']);
+    const [modalVisible, setModalVisible] = useState(false);
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -121,7 +125,25 @@ export default function CreateAccount() {
             console.log("password match");
             return true;
         }
+    }
 
+    function goToLogin() {
+        router.push("/(tabs)/loginScreen"); // Navigate to login instead
+    }
+
+    function openToS() {
+        console.log("open Tos");
+        setModalVisible(true);
+    }
+
+    function handleAcceptToS(event: GestureResponderEvent): void {
+        console.log("accept TOS");
+        setModalVisible(false);
+    }
+
+    function handleDeclineToS(event: GestureResponderEvent): void {
+        console.log("Decline TOS");
+        setModalVisible(false);
 
     }
 
@@ -130,7 +152,7 @@ export default function CreateAccount() {
             headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
             headerImage={
                 <Image
-                    source={require('@/assets/images/partial-react-logo.png')}
+                    source={require('@/assets/images/runner.png')}
                     style={styles.reactLogo}
                 />
             }>
@@ -175,10 +197,45 @@ export default function CreateAccount() {
                     style={styles.whiteBackground}
                     placeholder='Repeat Password'
                 />
+                <View style={{ flexDirection: 'row' }}>
+                    <BouncyCheckbox fillColor="red" onPress={(isChecked: boolean) => { }} />
+                    <ThemedText>Agree with
+                        <ThemedText type='link' onPress={openToS}> Terms & Conditions</ThemedText>
+                    </ThemedText>
+                </View>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        Alert.alert('Modal has been closed.');
+                        setModalVisible(!modalVisible);
+                    }}>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <ScrollView>
+                                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Terms and Conditions</Text>
+                                <Text>{terms}</Text>
+                            </ScrollView>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 2, }}>
+                                <View style={{ padding: 10 }}>
+                                    <Button onPress={handleAcceptToS} title='Accept' color={'#F08700'}
+                                    />
+                                </View>
+                                <View style={{ padding: 10 }}>
+                                    <Button onPress={handleDeclineToS} title='Decline' color={'#F08700'}
+                                    />
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
                 <Button
-                    title='Create Account'
+                    title='Sign Up'
                     onPress={handleCreateAccount}
+                    color={'#F08700'}
                 />
+                <ThemedText type='link' onPress={goToLogin}>Already have an account? </ThemedText>
             </ThemedView>
             <ThemedView>
                 {users.map((user) => (
@@ -200,16 +257,41 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     reactLogo: {
-        height: 178,
-        width: 290,
+        height: '100 %',
+        width: '100 %',
         bottom: 0,
         left: 0,
         position: 'absolute',
+        backgroundColor: 'black'
     },
     whiteText: {
         color: 'white',
     },
     whiteBackground: {
         backgroundColor: 'white',
-    }
+    },
+    button: {
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 25,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+        width: '90%',
+        height: '90%',
+    },
 });
