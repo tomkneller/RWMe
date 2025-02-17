@@ -1,6 +1,6 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { Image, View } from 'react-native';
+import { Button, Image, View } from 'react-native';
 
 import { Route } from '../app/models';
 
@@ -37,6 +37,8 @@ export const RWMListItem: React.FC<{
             </View>
 
             <Image style={{ height: 150, width: '100%', flex: 1, justifyContent: 'center' }} source={require("@/assets/images/placeholdermap.png")} />
+            <Button title='Join' />
+            <Button title='Message' />
         </ThemedView>
     );
 };
