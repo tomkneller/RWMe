@@ -8,8 +8,8 @@ export type UserAccount = {
 export type Route = {
     idroutes: number;
     routeName: string;
-    lat: number;
-    long: number;
+    lat: string;
+    longi: string;
     routeDateTime: string;
     distance: number;
     pace: string;

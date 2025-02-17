@@ -115,7 +115,7 @@ export default function CreateARoute() {
     }
 
     //TODO: Currently using current users name for accountname, should probably pass name from ID
-    await createRoute(routeNameText, routeDistance, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, startDate, accountName, additionalDetails)
+    await createRoute(routeNameText, routeDistance, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, startDate, accountName, additionalDetails, fileContent)
 
     router.push("/"); // Navigate home after successful route creation
   }

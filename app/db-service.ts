@@ -81,6 +81,21 @@ export const getRoutes = async () => {
     }
 };
 
+
+//Get specific route details using routeID
+export const getSpecificRoute = async (routeId: number) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/routes/${routeId}`);
+        return response.data;
+
+
+
+    } catch (error) {
+        console.error("error fetching specified route", error);
+        return null;
+    }
+}
+
 /**
  * Create a new route in the routes database
  * @param name name of the route
@@ -92,9 +107,9 @@ export const getRoutes = async () => {
  * @param hostname Username of route host
  * @param additionalDetails additional details about the route that the user can provide
  */
-export const createRoute = async (name: String, distance: Number, pace: String, lat: Number, long: Number, dateTime: String, hostname: String, additionalDetails: string) => {
+export const createRoute = async (name: String, distance: Number, pace: String, lat: Number, long: Number, dateTime: String, hostname: String, additionalDetails: string, fileContent) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/routes/create`, { name, distance, pace, lat, long, dateTime, hostname, additionalDetails });
+        const response = await axios.post(`${API_BASE_URL}/routes/create`, { name, distance, pace, lat, long, dateTime, hostname, additionalDetails, fileContent });
         console.log(response.data); // Success message and route ID
     } catch (error) {
         console.error("Error creating routes:", error);

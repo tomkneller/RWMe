@@ -1,13 +1,11 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Button, Image, View } from 'react-native';
-
 import { Route } from '../app/models';
-
 
 export const RWMListItem: React.FC<{
     routeData: Route;
-}> = ({ routeData: { idroutes, routeName, lat, long, distance, pace, hostName } }) => {
+}> = ({ routeData: { idroutes, routeName, lat, longi, distance, pace, hostName } }) => {
 
     return (
         <ThemedView style={{ backgroundColor: '#002531', marginTop: 5 }}>
@@ -35,8 +33,7 @@ export const RWMListItem: React.FC<{
                     <ThemedText id='routePace'>{pace} min/mi</ThemedText>
                 </View>
             </View>
-
-            <Image style={{ height: 150, width: '100%', flex: 1, justifyContent: 'center' }} source={require("@/assets/images/placeholdermap.png")} />
+            <Image style={{ height: 150, width: '100%', flex: 1, justifyContent: 'center' }} source={{ uri: `https://maps.googleapis.com/maps/api/staticmap?size=400x400&center=${lat},${longi}&zoom=12&key=` }} />
             <Button title='Join' />
             <Button title='Message' />
         </ThemedView>
