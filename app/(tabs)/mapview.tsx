@@ -35,7 +35,7 @@ export default function MapViewer() {
 
         const routeData = await getRoutes();
 
-        const processedMarkers = routeData.map((route) => ({
+        const processedMarkers = routeData.map((route: { idroutes: number, lat: number, longi: number, routeName: string, description: string, hostName: string, distance: number, pace: string, routeDateTime: string }) => ({
           id: route.idroutes,
           title: route.routeName,
           description: "Hosted By:" + route.hostName,
@@ -69,7 +69,10 @@ export default function MapViewer() {
 
 
 
-  const handleMarkerPress = (marker) => {
+  const handleMarkerPress = (marker: { dateTime: string, description: string, distance: number, hostName: string, id: number, latlng: { latitude: number, longitude: number }, pace: string, title: string }) => {
+    console.log(marker);
+
+
     setSelectedMarker(marker);
   };
 
@@ -108,21 +111,32 @@ export default function MapViewer() {
 
   const styles = StyleSheet.create({
     container: { flex: 1, alignItems: 'center' },
-    map: { ...StyleSheet.absoluteFillObject },
+    map: { ...StyleSheet.absoluteFillObject, flex: 1 },
+    markerDetailsContainer: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0, // Stretch to full width
+      backgroundColor: 'black',
+      padding: 10,
+      // Add other styling as needed (shadows, borders, etc.)
+    },
   });
 
   return (
     <View style={styles.container}>
-      {renderMap()} {/* Render the map conditionally */}
+      {renderMap()}
       {selectedMarker && (
-        <MapMarkerDetails
-          routename={selectedMarker.title}
-          distance={selectedMarker.distance}
-          pace={selectedMarker.pace}
-          hostName={selectedMarker.hostName}
-          dateTime={selectedMarker.dateTime}
-          distanceAway='100'
-        />
+        <View style={styles.markerDetailsContainer}>
+          <MapMarkerDetails
+            routename={selectedMarker.title}
+            distance={selectedMarker.distance}
+            pace={selectedMarker.pace}
+            hostName={selectedMarker.hostName}
+            dateTime={selectedMarker.dateTime}
+            distanceAway='100'
+          />
+        </View>
       )}
     </View>
   );
