@@ -12,6 +12,7 @@ import { getRoutes } from '../db-service'
 import React, { useEffect, useState } from 'react';
 import { MapMarkerDetails } from '@/components/MapMarkerDetails';
 import * as Location from 'expo-location';
+import { useLocation } from '@/hooks/useLocation'; // Import the custom hook
 
 export default function MapViewer() {
   const [loading, setLoading] = useState(true);
@@ -19,7 +20,7 @@ export default function MapViewer() {
   const [routes, setRoutes] = useState([]);
   const [markers, setProcessedMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
-  const [location, setLocation] = useState();
+  const { location, locationError, loading: locationLoading } = useLocation();
   const [region, setRegion] = useState(null); // Store region in state
 
   //TODO: Placeholder marker structures,should retrieve from db within filtered ranges to improve performance
@@ -27,13 +28,10 @@ export default function MapViewer() {
     const fetchData = async () => {  // Combined fetch function
       try {
         setLoading(true); // Start loading
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          throw new Error('Location permission denied'); // Throw error to be caught
-        }
 
-        const currLocation = await Location.getCurrentPositionAsync({});
-        setLocation(currLocation); // Set location first
+        if (!location) { // Check if location is available
+          return; // or handle the case where location is not available yet
+        }
 
         const routeData = await getRoutes(); // Then fetch routes
 
@@ -51,8 +49,8 @@ export default function MapViewer() {
 
         // Calculate region *after* location and routes
         const calculatedRegion = {
-          latitude: currLocation.coords.latitude,
-          longitude: currLocation.coords.longitude,
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         };
@@ -67,7 +65,7 @@ export default function MapViewer() {
     };
 
     fetchData(); // Call the combined function
-  }, []);
+  }, [location]);
 
 
 
