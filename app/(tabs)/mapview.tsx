@@ -25,15 +25,15 @@ export default function MapViewer() {
 
   //TODO: Placeholder marker structures,should retrieve from db within filtered ranges to improve performance
   useEffect(() => {
-    const fetchData = async () => {  // Combined fetch function
+    const fetchData = async () => {
       try {
-        setLoading(true); // Start loading
+        setLoading(true);
 
-        if (!location) { // Check if location is available
-          return; // or handle the case where location is not available yet
+        if (!location) {
+          return;
         }
 
-        const routeData = await getRoutes(); // Then fetch routes
+        const routeData = await getRoutes();
 
         const processedMarkers = routeData.map((route) => ({
           id: route.idroutes,
@@ -102,13 +102,7 @@ export default function MapViewer() {
         </MapView>
       );
     }
-
-    return null; // Or a placeholder if needed
-
-
-
-
-
+    return null;
   };
 
 
