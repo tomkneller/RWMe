@@ -8,7 +8,6 @@ import { ExternalLink } from '@/components/ExternalLink';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { UserAccount } from '../models';
 import { getDBConnection, getUsers, saveUsers, createTable, deleteUser } from '../db-service';
-import { UserProfileComponent } from '../UserProfile';
 import { createUser } from '../db-service';
 import { router } from 'expo-router';
 import AuthContext from '../AuthContext';
@@ -253,11 +252,6 @@ export default function CreateAccount() {
                     color={'#F08700'}
                 />
                 <ThemedText type='link' onPress={goToLogin}>Already have an account? </ThemedText>
-            </ThemedView>
-            <ThemedView>
-                {users.map((user) => (
-                    <UserProfileComponent key={user.id} userProfile={user} deleteItem={deleteItem} />
-                ))}
             </ThemedView>
         </ParallaxScrollView>
     );

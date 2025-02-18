@@ -5,6 +5,7 @@ import { Route } from '../app/models';
 import { getRoutes, getSpecificRoute } from '../app/db-service';
 import { RefreshControl, ScrollView, Text } from 'react-native';
 import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
+import { useLocation } from '@/hooks/useLocation'; // Import the custom hook
 
 export function RWMList() {
     const insets = useSafeAreaInsets();
@@ -12,7 +13,7 @@ export function RWMList() {
     const [routes, setRoutes] = useState<Route[]>([]);
     const [newRouteName, setNewRouteName] = useState('');
     const [refreshing, setRefreshing] = useState(false); // State for refreshing
-
+    const { location, locationError, loading: locationLoading } = useLocation();
 
     const loadDataCallback = useCallback(async () => {
         setRefreshing(true); // Set refreshing to true before fetching data
