@@ -17,17 +17,12 @@ export default function HomeScreen() {
     >
       <ThemedView >
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          {/* <TextInput style={{
-            backgroundColor: 'white',
-            width: 150,
-          }}
-            placeholder='Current Location'></TextInput> */}
           <ThemedText>Max Pace: </ThemedText>
           <TextInput style={{
             backgroundColor: 'white',
             width: 50,
           }}
-            // defaultValue='5'
+            defaultValue='200'
             value={pace}
             onChangeText={setPace}>
           </TextInput>
@@ -70,9 +65,7 @@ export default function HomeScreen() {
         </View>
       </ThemedView>
 
-      {/* <ThemedView style={styles.stepContainer}> */}
       <RWMList dist={parseInt(withinDistance)} terrain={terrainType} rtDist={parseInt(routeDistance)} maxPace={pace} />
-      {/* </ThemedView> */}
     </SafeAreaView>
 
   );

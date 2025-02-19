@@ -73,6 +73,9 @@ export const apiLogin = async (userData) => {
 
 //Get all routes from routes database
 export const getRoutes = async () => {
+
+    console.log("Fetching Routes");
+
     try {
         const response = await axios.get(`${API_BASE_URL}/routes`);
         return response.data;

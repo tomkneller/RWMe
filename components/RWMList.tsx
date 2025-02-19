@@ -1,108 +1,22 @@
-import { ThemedView } from '@/components/ThemedView';
 import { RWMListItem } from '@/components/RWMListItem';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Route } from '../app/models';
 import { getRoutes, getSpecificRoute } from '../app/db-service';
 import { RefreshControl, ScrollView, Text } from 'react-native';
-import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
-import { useLocation } from '@/hooks/useLocation'; // Import the custom hook
+import { useLocation } from '@/hooks/useLocation';
+import { filterByRouteDistance, filterByRouteLocation, calculateDistance } from '@/app/filterUtils';
 
-export const RWMList = (props) => {
+export const RWMList = (props: { dist: number; terrain: string; rtDist: number; maxPace: string; }) => {
 
     const { dist, terrain, rtDist, maxPace } = props;
 
-    const insets = useSafeAreaInsets();
+    const { location, locationError, loading: locationLoading } = useLocation();
 
     const [routes, setRoutes] = useState<Route[]>([]);
-    const [newRouteName, setNewRouteName] = useState('');
-    const [refreshing, setRefreshing] = useState(false); // State for refreshing
-    const { location, locationError, loading: locationLoading } = useLocation();
+    const [refreshing, setRefreshing] = useState(false);
     const [filteredLocations, setFilteredLocations] = useState<Route[]>(routes);
-    const [filterIsEnabled, setFilterIsEnabled] = useState(true);
-
-    const [isFilterByRadiusEnabled, setIsFilterByRadiusEnabled] = useState(false);
-    const [isFilterBySearchEnabled, setIsFilterBySearchEnabled] = useState(false);
-
-
-    console.log(dist);
-    console.log(terrain);
-    console.log(rtDist);
-    console.log(maxPace);
-
-
-    const deg2rad = (deg: number) => {
-        return deg * (Math.PI / 180);
-    };
-
-    /**
-     * 
-     * @param lat1 latitude of users origin point
-     * @param lon1 longitude of users origin point
-     * @param lat2 latitude of event origin
-     * @param lon2 longitude of event origin
-     * @returns distance away of event start from the users location in kilometers
-     */
-    const calculateDistance = (lat1, lon1, lat2, lon2) => {
-        // Haversine formula for calculating distance between two coordinates
-        const R = 6371; // Radius of the earth in km
-        const dLat = deg2rad(lat2 - lat1);
-        const dLon = deg2rad(lon2 - lon1);
-        const a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const d = R * c; // Distance in km
-        return d;
-    };
-
-    const filterByDistance = (distance) => {
-
-        console.log("filter by dis");
-
-        const validRadius = dist !== '' && !isNaN(Number(dist)) && Number(dist) >= 0;
-        if (validRadius) {
-            const radius = distance;
-            const filtered = routes.filter(route => {
-                const distance = calculateDistance(
-                    location.coords.latitude,
-                    location.coords.longitude,
-                    route.lat,
-                    route.longi
-                );
-                return distance <= radius;
-            });
-
-            console.log(filtered);
-
-            setFilteredLocations(filtered);
-        }
-        else {
-            setFilteredLocations(routes)
-        }
-    }
-
-
-
-    const filterByRouteDistance = (distance) => {
-
-        console.log("filter by route dis");
-
-
-        const rtDistance = distance;
-        const filtered = routes.filter(route => {
-            const distance = route.distance;
-
-            return distance <= rtDistance;
-        });
-
-        console.log(filtered);
-
-        setFilteredLocations(filtered);
-
-    }
-
-
+    const [isilterByRouteLocationEnabled, setIsilterByRouteLocationEnabled] = useState(false);
+    const [isFilterByRouteDistanceEnabled, setIsFilterByRouteDistanceEnabled] = useState(false);
 
 
     if (!locationLoading) {
@@ -110,29 +24,16 @@ export const RWMList = (props) => {
             for (let index = 0; index < routes.length; index++) {
                 routes[index].distFromUser = calculateDistance(location.coords.latitude, location.coords.longitude, routes[index].lat, routes[index].longi);
             }
-
-
         } else {
             console.error(locationError);
         }
     }
 
-
-
     const loadDataCallback = useCallback(async () => {
         setRefreshing(true); // Set refreshing to true before fetching data
 
         try {
-            console.log("get routes");
-            // console.log(await getRoutes());
             setRoutes(await getRoutes());
-
-            console.log(await getSpecificRoute(657693));
-
-            // if (!locationLoading) {
-            //     filterByDistance();
-            // }
-
         } catch (error) {
             console.error("Error loading data:", error);
         } finally {
@@ -140,34 +41,17 @@ export const RWMList = (props) => {
         }
     }, []);
 
-
     const applyFilters = () => {
+
+        setIsFilterByRouteDistanceEnabled(rtDist !== null && !isNaN(Number(rtDist)) && Number(rtDist) >= 0);
+        setIsilterByRouteLocationEnabled(dist !== null && !isNaN(Number(dist)) && Number(dist) >= 0);
+
         let filtered = routes;
-        const validRadius = dist !== '' && !isNaN(Number(dist)) && Number(dist) >= 0;
 
-        if (validRadius) {
-            const numRadius = dist;
-            filtered = filtered.filter(route => {
-                const distance = calculateDistance( // Your distance calculation
-                    location.coords.latitude,
-                    location.coords.longitude,
-                    route.lat,
-                    route.longi
-                );
-                return distance <= numRadius;
-            });
+        if (!locationLoading && location) {
+            filtered = isilterByRouteLocationEnabled ? filterByRouteLocation(filtered, location.coords, dist) : filtered;
         }
-
-
-
-        if (rtDist) {
-            filtered = filtered.filter(route => {
-                const distance = route.distance;
-
-                return distance <= rtDist;
-            });
-        }
-
+        filtered = isFilterByRouteDistanceEnabled ? filterByRouteDistance(filtered, rtDist) : filtered;
 
         setFilteredLocations(filtered);
     }
@@ -175,25 +59,12 @@ export const RWMList = (props) => {
     useEffect(() => {
         loadDataCallback();
 
-        console.log(dist);
+        applyFilters();
 
-        if (!locationLoading) {
-            // filterByDistance(dist);
-            // filterByRouteDistance(rtDist);
-            applyFilters();
-        }
-
-        // if (!dist) {
-        //     setFilterIsEnabled(false);
-        // }
-        // else {
-        //     setFilterIsEnabled(true)
-        // }
-
-    }, [loadDataCallback, locationLoading, dist, terrain, rtDist, maxPace]);
+    }, [loadDataCallback, locationLoading, dist, terrain, rtDist, maxPace, isFilterByRouteDistanceEnabled, isilterByRouteLocationEnabled]);
 
     const onRefresh = useCallback(() => { // Function for pull-to-refresh
-        console.log("Refresh");
+        console.log("Refreshing");
 
         loadDataCallback();
     }, [loadDataCallback]);
@@ -203,13 +74,9 @@ export const RWMList = (props) => {
             refreshControl={ // Add RefreshControl as a prop
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }>
-            {!locationLoading && filterIsEnabled && filteredLocations.map((route) => (
+            {!locationLoading && filteredLocations.map((route) => (
                 <RWMListItem key={route.idroutes} routeData={route} />
             ))}
-
-            {/* {!locationLoading && !filteredLocations && routes.map((route) => (
-                <RWMListItem key={route.idroutes} routeData={route} />
-            ))} */}
             <Text></Text>
         </ScrollView >
     );
