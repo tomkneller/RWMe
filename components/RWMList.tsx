@@ -7,13 +7,18 @@ import { RefreshControl, ScrollView, Text } from 'react-native';
 import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { useLocation } from '@/hooks/useLocation'; // Import the custom hook
 
-export function RWMList() {
+export const RWMList = (props) => {
+
+    const { dist } = props;
+
     const insets = useSafeAreaInsets();
 
     const [routes, setRoutes] = useState<Route[]>([]);
     const [newRouteName, setNewRouteName] = useState('');
     const [refreshing, setRefreshing] = useState(false); // State for refreshing
     const { location, locationError, loading: locationLoading } = useLocation();
+    const [filteredLocations, setFilteredLocations] = useState<Route[]>([]);
+    const [filterIsEnabled, setFilterIsEnabled] = useState(true);
 
     const deg2rad = (deg: number) => {
         return deg * (Math.PI / 180);
@@ -41,12 +46,39 @@ export function RWMList() {
         return d;
     };
 
+    const filterByDistance = (distance) => {
+
+        console.log("filter by dis");
+
+        const validRadius = dist !== '' && !isNaN(Number(dist)) && Number(dist) >= 0;
+        if (validRadius) {
+            const radius = distance;
+            const filtered = routes.filter(route => {
+                const distance = calculateDistance(
+                    location.coords.latitude,
+                    location.coords.longitude,
+                    route.lat,
+                    route.longi
+                );
+                return distance <= radius;
+            });
+
+            console.log(filtered);
+
+            setFilteredLocations(filtered);
+        }
+        else {
+            setFilteredLocations(routes)
+        }
+    }
 
     if (!locationLoading) {
         if (location && routes) {
             for (let index = 0; index < routes.length; index++) {
                 routes[index].distFromUser = calculateDistance(location.coords.latitude, location.coords.longitude, routes[index].lat, routes[index].longi);
             }
+
+
         } else {
             console.error(locationError);
         }
@@ -64,6 +96,9 @@ export function RWMList() {
 
             console.log(await getSpecificRoute(657693));
 
+            // if (!locationLoading) {
+            //     filterByDistance();
+            // }
 
         } catch (error) {
             console.error("Error loading data:", error);
@@ -74,7 +109,21 @@ export function RWMList() {
 
     useEffect(() => {
         loadDataCallback();
-    }, [loadDataCallback]);
+
+        console.log(dist);
+
+        if (!locationLoading) {
+            filterByDistance(dist);
+        }
+
+        // if (!dist) {
+        //     setFilterIsEnabled(false);
+        // }
+        // else {
+        //     setFilterIsEnabled(true)
+        // }
+
+    }, [loadDataCallback, dist]);
 
     const onRefresh = useCallback(() => { // Function for pull-to-refresh
         console.log("Refresh");
@@ -87,10 +136,9 @@ export function RWMList() {
             refreshControl={ // Add RefreshControl as a prop
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }>
-            {!locationLoading && routes.map((route) => (
+            {!locationLoading && filterIsEnabled && filteredLocations.map((route) => (
                 <RWMListItem key={route.idroutes} routeData={route} />
             ))}
-
             <Text></Text>
         </ScrollView >
     );

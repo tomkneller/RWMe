@@ -3,8 +3,12 @@ import { RWMList } from '@/components/RWMList';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { useState } from 'react';
 
 export default function HomeScreen() {
+  const [withinDistance, setWithinDistance] = useState('');
+
+
 
   return (
     <SafeAreaView
@@ -22,14 +26,16 @@ export default function HomeScreen() {
             backgroundColor: 'white',
             width: 50,
           }}
-            defaultValue='5'>
+            // defaultValue='5'
+            value={withinDistance}
+            onChangeText={setWithinDistance}>
           </TextInput>
           <ThemedText> mi</ThemedText>
         </View>
       </ThemedView>
 
       {/* <ThemedView style={styles.stepContainer}> */}
-      <RWMList />
+      <RWMList dist={parseInt(withinDistance)} />
       {/* </ThemedView> */}
     </SafeAreaView>
 
