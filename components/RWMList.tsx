@@ -9,7 +9,7 @@ import { useLocation } from '@/hooks/useLocation'; // Import the custom hook
 
 export const RWMList = (props) => {
 
-    const { dist } = props;
+    const { dist, terrain, rtDist, maxPace } = props;
 
     const insets = useSafeAreaInsets();
 
@@ -17,8 +17,18 @@ export const RWMList = (props) => {
     const [newRouteName, setNewRouteName] = useState('');
     const [refreshing, setRefreshing] = useState(false); // State for refreshing
     const { location, locationError, loading: locationLoading } = useLocation();
-    const [filteredLocations, setFilteredLocations] = useState<Route[]>([]);
+    const [filteredLocations, setFilteredLocations] = useState<Route[]>(routes);
     const [filterIsEnabled, setFilterIsEnabled] = useState(true);
+
+    const [isFilterByRadiusEnabled, setIsFilterByRadiusEnabled] = useState(false);
+    const [isFilterBySearchEnabled, setIsFilterBySearchEnabled] = useState(false);
+
+
+    console.log(dist);
+    console.log(terrain);
+    console.log(rtDist);
+    console.log(maxPace);
+
 
     const deg2rad = (deg: number) => {
         return deg * (Math.PI / 180);
@@ -72,6 +82,29 @@ export const RWMList = (props) => {
         }
     }
 
+
+
+    const filterByRouteDistance = (distance) => {
+
+        console.log("filter by route dis");
+
+
+        const rtDistance = distance;
+        const filtered = routes.filter(route => {
+            const distance = route.distance;
+
+            return distance <= rtDistance;
+        });
+
+        console.log(filtered);
+
+        setFilteredLocations(filtered);
+
+    }
+
+
+
+
     if (!locationLoading) {
         if (location && routes) {
             for (let index = 0; index < routes.length; index++) {
@@ -107,13 +140,47 @@ export const RWMList = (props) => {
         }
     }, []);
 
+
+    const applyFilters = () => {
+        let filtered = routes;
+        const validRadius = dist !== '' && !isNaN(Number(dist)) && Number(dist) >= 0;
+
+        if (validRadius) {
+            const numRadius = dist;
+            filtered = filtered.filter(route => {
+                const distance = calculateDistance( // Your distance calculation
+                    location.coords.latitude,
+                    location.coords.longitude,
+                    route.lat,
+                    route.longi
+                );
+                return distance <= numRadius;
+            });
+        }
+
+
+
+        if (rtDist) {
+            filtered = filtered.filter(route => {
+                const distance = route.distance;
+
+                return distance <= rtDist;
+            });
+        }
+
+
+        setFilteredLocations(filtered);
+    }
+
     useEffect(() => {
         loadDataCallback();
 
         console.log(dist);
 
         if (!locationLoading) {
-            filterByDistance(dist);
+            // filterByDistance(dist);
+            // filterByRouteDistance(rtDist);
+            applyFilters();
         }
 
         // if (!dist) {
@@ -123,7 +190,7 @@ export const RWMList = (props) => {
         //     setFilterIsEnabled(true)
         // }
 
-    }, [loadDataCallback, dist]);
+    }, [loadDataCallback, locationLoading, dist, terrain, rtDist, maxPace]);
 
     const onRefresh = useCallback(() => { // Function for pull-to-refresh
         console.log("Refresh");
@@ -139,6 +206,10 @@ export const RWMList = (props) => {
             {!locationLoading && filterIsEnabled && filteredLocations.map((route) => (
                 <RWMListItem key={route.idroutes} routeData={route} />
             ))}
+
+            {/* {!locationLoading && !filteredLocations && routes.map((route) => (
+                <RWMListItem key={route.idroutes} routeData={route} />
+            ))} */}
             <Text></Text>
         </ScrollView >
     );
