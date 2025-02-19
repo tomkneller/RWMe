@@ -15,6 +15,45 @@ export function RWMList() {
     const [refreshing, setRefreshing] = useState(false); // State for refreshing
     const { location, locationError, loading: locationLoading } = useLocation();
 
+    const deg2rad = (deg: number) => {
+        return deg * (Math.PI / 180);
+    };
+
+    /**
+     * 
+     * @param lat1 latitude of users origin point
+     * @param lon1 longitude of users origin point
+     * @param lat2 latitude of event origin
+     * @param lon2 longitude of event origin
+     * @returns distance away of event start from the users location in kilometers
+     */
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+        // Haversine formula for calculating distance between two coordinates
+        const R = 6371; // Radius of the earth in km
+        const dLat = deg2rad(lat2 - lat1);
+        const dLon = deg2rad(lon2 - lon1);
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const d = R * c; // Distance in km
+        return d;
+    };
+
+
+    if (!locationLoading) {
+        if (location && routes) {
+            for (let index = 0; index < routes.length; index++) {
+                routes[index].distFromUser = calculateDistance(location.coords.latitude, location.coords.longitude, routes[index].lat, routes[index].longi);
+            }
+        } else {
+            console.error(locationError);
+        }
+    }
+
+
+
     const loadDataCallback = useCallback(async () => {
         setRefreshing(true); // Set refreshing to true before fetching data
 
@@ -48,7 +87,7 @@ export function RWMList() {
             refreshControl={ // Add RefreshControl as a prop
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }>
-            {routes.map((route) => (
+            {!locationLoading && routes.map((route) => (
                 <RWMListItem key={route.idroutes} routeData={route} />
             ))}
 

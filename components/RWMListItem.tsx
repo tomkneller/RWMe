@@ -5,7 +5,7 @@ import { Route } from '../app/models';
 
 export const RWMListItem: React.FC<{
     routeData: Route;
-}> = ({ routeData: { idroutes, routeName, lat, longi, distance, pace, hostName } }) => {
+}> = ({ routeData: { idroutes, routeName, lat, longi, distance, pace, hostName, distFromUser } }) => {
 
     return (
         <ThemedView style={{ backgroundColor: '#002531', marginTop: 5 }}>
@@ -22,7 +22,7 @@ export const RWMListItem: React.FC<{
                 <View style={{ flexDirection: 'column' }}>
                     <ThemedText style={{ fontSize: 12 }} type='defaultSemiBold'>Distance away:</ThemedText>
                     {/* <ThemedText id='distanceFromUser'>{item.distanceFromUser} miles</ThemedText> */}
-                    <ThemedText id='distanceFromUser'>100 miles</ThemedText>
+                    <ThemedText id='distanceFromUser'>{distFromUser.toFixed(2)} Km</ThemedText>
                 </View>
                 <View style={{ flexDirection: 'column' }}>
                     <ThemedText style={{ fontSize: 12 }} type='defaultSemiBold'>Route Distance:</ThemedText>

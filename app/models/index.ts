@@ -14,4 +14,5 @@ export type Route = {
     distance: number;
     pace: string;
     hostName: string;
+    distFromUser: number;
 }
