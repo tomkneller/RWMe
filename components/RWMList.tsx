@@ -1,7 +1,7 @@
 import { RWMListItem } from '@/components/RWMListItem';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Route } from '../app/models';
-import { getRoutes, getSpecificRoute } from '../app/db-service';
+import { getRoutes } from '../app/db-service';
 import { RefreshControl, ScrollView, Text } from 'react-native';
 import { useLocation } from '@/hooks/useLocation';
 import { filterByRouteDistance, filterByRouteLocation, calculateDistance } from '@/app/filterUtils';

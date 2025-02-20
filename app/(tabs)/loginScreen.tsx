@@ -17,7 +17,7 @@ const LoginScreen = () => {  // You might receive the navigation prop
             const userData = { name, password }; // Prepare user data
             await login(userData); // Call the login function from the context
             router.push("/(tabs)/profile"); // Navigate after successful login
-        } catch (error) {
+        } catch (error: any) {
             console.error("Login Error:", error);
             Alert.alert('Error', error.message);
         } finally {

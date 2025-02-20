@@ -1,4 +1,4 @@
-import { StyleSheet, Image, Platform, Text, Button, FlatList, View } from 'react-native';
+import { StyleSheet, Image, Platform, Text, Button, FlatList, View, Alert } from 'react-native';
 
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
@@ -30,7 +30,7 @@ export default function Profile() {
     try {
       await logout(); // Call the logout function from the context
       router.push("/(tabs)/loginScreen"); // Navigate after successful login
-    } catch (error) {
+    } catch (error: any) {
       console.error("LogoutError:", error);
       Alert.alert('Error', error.message);
     }

@@ -1,13 +1,24 @@
-import React, { createContext, useState, useEffect } from 'react';
-import * as SecureStore from 'expo-secure-store'; // Import SecureStore
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 import { ThemedText } from '../components/ThemedText';
 import { apiLogin } from './db-service';
+import { UserAccount } from "@/app/models/index";
 
-const AuthContext = createContext();
+interface AuthContextType {
+    user: UserAccount | null;
+    login: (userData: any) => Promise<void>;
+    logout: () => Promise<void>;
+}
 
-export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+const AuthContext = createContext<AuthContextType>({
+    user: null,
+    login: async () => { },
+    logout: async () => { },
+});
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+    const [user, setUser] = useState({ name: '', password: '' });
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -29,8 +40,8 @@ export const AuthProvider = ({ children }) => {
                     }
 
                 }
-            } catch (error) {
-                console.error("Error checking auth:", error);
+            } catch (error: any) {
+                console.error("Error checking auth:", error.response.data);
             } finally {
                 setIsLoading(false);
             }
@@ -39,19 +50,19 @@ export const AuthProvider = ({ children }) => {
         checkAuth();
     }, []);
 
-    const login = async (userData) => {
+    const login = async (userData: { name: string, password: string }) => {
         console.log(userData);
 
         try {
-            // ... (API login request) ...
-            const { accessToken, refreshToken } = await apiLogin(userData); // Example
+            //API login request
+            const { accessToken, refreshToken } = await apiLogin(userData);
 
 
             await SecureStore.setItemAsync('user', JSON.stringify(userData)); // Store user data
             await SecureStore.setItemAsync('accessToken', accessToken); // Store access token
             // ... (store refresh token if needed - using SecureStore)
 
-            setUser(userData); // Or fetch actual user data
+            setUser(userData);
         }
         catch (error) {
             console.error("Login Error: ", error);
@@ -64,15 +75,15 @@ export const AuthProvider = ({ children }) => {
         try {
             await SecureStore.deleteItemAsync('user');
             await SecureStore.deleteItemAsync('accessToken');
-            // ... (delete refresh token if stored)
-            setUser(null);
+            // ... (delete refresh token when stored)
+            setUser({ name: '', password: '' });
         } catch (error) {
             console.error("Logout Error:", error);
         }
     };
 
     if (isLoading) {
-        return <ThemedText>Loading</ThemedText>; // Or similar
+        return <ThemedText>Loading</ThemedText>;
     }
 
     return (
@@ -83,13 +94,3 @@ export const AuthProvider = ({ children }) => {
 };
 
 export default AuthContext;
-
-// // ... In your components:
-// const MyComponent = () => {
-//     const { user } = useContext(AuthContext);
-
-//     return (
-//         { user?<UserDashboard /> : <LoginScreen />
-// }
-//   );
-// };

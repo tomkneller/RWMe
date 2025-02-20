@@ -1,17 +1,12 @@
-import { Image, StyleSheet, Platform, TextInput, Button, Alert, Text, View, Modal, Pressable, ScrollView, GestureResponderEvent } from 'react-native';
+import { Image, StyleSheet, TextInput, Button, Alert, Text, View, Modal, ScrollView, GestureResponderEvent } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import React, { useContext, useState } from 'react';
 import { UserAccount } from '../models';
-import { getDBConnection, getUsers, saveUsers, createTable, deleteUser } from '../db-service';
 import { createUser } from '../db-service';
 import { router } from 'expo-router';
 import AuthContext from '../AuthContext';
-import { color } from '@rneui/base';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { terms } from '@/assets/data/terms.json'
 
@@ -63,21 +58,12 @@ export default function CreateAccount() {
             errors.push("You must accept the ToS to create an account");
         }
 
-        console.log(errors);
-
-        console.log(newUserPhone);
-
-        // const listo = errors.map(error => { error + '\n' })
-
-        // console.log(listo);
-
 
         if (errors.length > 0) {
             setValidationErrors(errors)
 
             const result_string = errors.join("\n");
             console.log(result_string)
-
 
             Alert.alert("Theres a problem", result_string)
 
@@ -96,22 +82,11 @@ export default function CreateAccount() {
             await login(userData); // Call the login function
             router.push("/(tabs)/profile"); // Navigate after successful login
 
-        } catch (error) {
+        } catch (error: any) {
             console.error("Login Error:", error);
             Alert.alert('Error', error.message);
         } finally {
             setIsLoading(false);
-        }
-    };
-
-    const deleteItem = async (id: number) => {
-        try {
-            const db = await getDBConnection();
-            await deleteUser(db, id);
-            const updatedUsers = users.filter(user => user.id !== id); // Filter users array
-            setUsers(updatedUsers);
-        } catch (error) {
-            console.error("Error deleting user:", error);
         }
     };
 

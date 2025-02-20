@@ -1,27 +1,51 @@
-import { StyleSheet, Image, Platform, View, ActivityIndicator, Text } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import MapView, { Callout } from 'react-native-maps';
+import MapView from 'react-native-maps';
 import { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 import { getRoutes } from '../db-service'
 import React, { useEffect, useState } from 'react';
 import { MapMarkerDetails } from '@/components/MapMarkerDetails';
-import * as Location from 'expo-location';
 import { useLocation } from '@/hooks/useLocation'; // Import the custom hook
+
+
+interface Region {
+  latitude: number;
+  longitude: number;
+  latitudeDelta: number;
+  longitudeDelta: number;
+}
+
+interface Route {
+  dateTime: string;
+  description: string;
+  distance: number;
+  hostName: string;
+  id: number;
+  latlng: {
+    latitude: number;
+    longitude: number;
+  };
+  pace: string;
+  title: string;
+}
+
+// interface Route {
+//   id: number;
+//   latlng: {
+//     latitude: number;
+//     longitude: number;
+//   };
+//   title: string;
+//   description: string;
+// }
 
 export default function MapViewer() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [routes, setRoutes] = useState([]);
-  const [markers, setProcessedMarkers] = useState([]);
-  const [selectedMarker, setSelectedMarker] = useState(null);
-  const { location, locationError, loading: locationLoading } = useLocation();
-  const [region, setRegion] = useState(null); // Store region in state
+  const [selectedMarker, setSelectedMarker] = useState<Route | null>(null);
+  const { location } = useLocation();
+  const [region, setRegion] = useState<Region | null>(null); // Store region in state
 
   //TODO: Placeholder marker structures,should retrieve from db within filtered ranges to improve performance
   useEffect(() => {
@@ -56,7 +80,7 @@ export default function MapViewer() {
         };
         setRegion(calculatedRegion); // Set region last
 
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error fetching data:", error);
         setError(error.message); // Set error message
       } finally {
@@ -69,8 +93,9 @@ export default function MapViewer() {
 
 
 
-  const handleMarkerPress = (marker: { dateTime: string, description: string, distance: number, hostName: string, id: number, latlng: { latitude: number, longitude: number }, pace: string, title: string }) => {
+  const handleMarkerPress = (marker: Route) => {
     console.log(marker);
+
 
 
     setSelectedMarker(marker);
@@ -97,7 +122,7 @@ export default function MapViewer() {
           initialRegion={region}
           onPress={handleMapPress}
         >
-          {routes.map((route: { id: number, latlng: { latitude: number, longitude: number }, title: string, description: string }) => (
+          {routes.map((route: Route) => (
             <Marker key={route.id} coordinate={route.latlng}
               title={route.title} description={route.description}
               onPress={() => handleMarkerPress(route)} />

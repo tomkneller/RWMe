@@ -3,12 +3,12 @@ import React, { useContext, useEffect, useState } from 'react'
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+
 import * as DocumentPicker from 'expo-document-picker';
 import { Picker } from '@react-native-picker/picker';
 import { createRoute } from '../db-service';
 import { getStartCoordinates, calculateDistances } from '../gpxParsingUtils';
-import * as FileSystem from 'expo-file-system';
 import { router } from 'expo-router';
 import AuthContext from '../AuthContext';
 
@@ -22,7 +22,7 @@ export default function CreateARoute() {
   let [routeDistance, setRouteDistance] = useState(0);
   let [routeStartLat, setRouteStartLat] = useState(0);
   let [routeStartLong, setRouteStartLong] = useState(0);
-  const [date, setDate] = useState(new Date(1598051730000));
+  const [date, setDate] = useState<Date>(new Date());
   const [fileContent, setFileContent] = useState('');
   const [validationErrors, setValidationErrors] = useState(['']);
 
@@ -44,10 +44,10 @@ export default function CreateARoute() {
     }
   }, [fileContent]);
 
-  const onDateChange = (event: any, selectedDate: Date) => {
+  const onDateChange = (event: any, selectedDate: Date | undefined) => {
     const currentDate = selectedDate;
     setShow(false);
-    setDate(currentDate);
+    setDate(currentDate ?? new Date());
   };
 
   const handleRouteNameChange = (newRouteName: string) => {
@@ -203,13 +203,13 @@ export default function CreateARoute() {
       <Button onPress={showTimepicker} title="Show time picker!" />
       <ThemedText>selected: {date.toISOString().slice(0, 19).replace('T', ' ')}</ThemedText>
       {show && (
-        <DateTimePicker
+        <RNDateTimePicker
           testID="dateTimePicker"
           value={date}
           mode={mode}
           is24Hour={true}
           onChange={onDateChange}
-          minimumDate={new Date(2025, 6, 1)} //TODO: change to todays date
+          minimumDate={new Date()}
         />
       )}
 

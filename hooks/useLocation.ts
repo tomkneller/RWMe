@@ -1,9 +1,18 @@
 import { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 
+interface Coords {
+    latitude: number;
+    longitude: number;
+}
+
+interface Location {
+    coords: Coords;
+}
+
 export const useLocation = () => {
-    const [location, setLocation] = useState(null);
-    const [locationError, setError] = useState(null);
+    const [location, setLocation] = useState<Location | null>(null);
+    const [locationError, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -18,9 +27,9 @@ export const useLocation = () => {
                 }
                 const currLocation = await Location.getCurrentPositionAsync({});
                 setLocation(currLocation);
-            } catch (err) {
-                console.error("Error getting location:", err);
-                setError(err.message);
+            } catch (error: any) {
+                console.error("Error getting location:", error);
+                setError(error.message);
             } finally {
                 setLoading(false);
             }
@@ -29,5 +38,5 @@ export const useLocation = () => {
         getLocation();
     }, []);
 
-    return { location, locationError, loading }; // Return location, error, and loading state
+    return { location, locationError, loading };
 };

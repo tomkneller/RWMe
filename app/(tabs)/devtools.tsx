@@ -1,24 +1,14 @@
-import { StyleSheet, Image, Platform, Button } from 'react-native';
+import { StyleSheet, Button } from 'react-native';
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { router } from 'expo-router';
 import { useContext } from 'react';
 import AuthContext from '../AuthContext';
 
 
-export default function DevTools({ navigation }) {
-  // const { user } = useContext(AuthContext);
-  const { user } = useContext(AuthContext);
-  //console.log(user);
-
-  console.log(user);
+export default function DevTools({ }) {
+  useContext(AuthContext);
 
   return (
     <ParallaxScrollView
