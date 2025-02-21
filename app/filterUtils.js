@@ -53,14 +53,18 @@ export const filterByRouteDistance = (routes, distanceFilter) => {
 /**
  * Stub for filtering by route terrain type
  */
-export const filterByRouteTerrain = () => {
+export const filterByRouteTerrain = (routes, terrainFilter) => {
+  return routes.filter(route => {
+    const terrain = route.terrainType;
 
+    return terrain == terrainFilter;
+  })
 }
 
 /**
  * Stub for filtering by a pace range
  */
-export const filterByRoutePace = () => {
+export const filterByRoutePace = (routes, paceFilter) => {
 
 }
 
@@ -77,7 +81,7 @@ export const filterByRouteLocation = (routes, userLocation, searchRadius) => {
   if (validSearchRadius) {
     const numRadius = searchRadius;
     return routes.filter(route => {
-      const distance = calculateDistance( // Your distance calculation
+      const distance = calculateDistance(
         userLocation.latitude,
         userLocation.longitude,
         route.lat,
