@@ -4,10 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useState } from 'react';
+import { Picker } from '@react-native-picker/picker';
 
 export default function HomeScreen() {
   const [withinDistance, setWithinDistance] = useState('');
-  const [terrainType, setTerrainType] = useState('');
+  const [terrainType, setTerrainType] = useState('any');
   const [routeDistance, setRouteDistance] = useState('');
   const [pace, setPace] = useState('');
 
@@ -16,57 +17,65 @@ export default function HomeScreen() {
       style={{ paddingBottom: 45 }}
     >
       <ThemedView >
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          <ThemedText>Max Pace: </ThemedText>
-          <TextInput style={{
-            backgroundColor: 'white',
-            width: 50,
-          }}
-            defaultValue='200'
-            value={pace}
-            onChangeText={setPace}>
-          </TextInput>
+        <View style={{ flexDirection: 'column' }}>
+          <View >
+            <ThemedText>Max Pace: </ThemedText>
+            <TextInput style={{
+              backgroundColor: 'white',
+              width: 50,
+            }}
+              defaultValue='200'
+              value={pace}
+              onChangeText={setPace}>
+            </TextInput>
+          </View>
 
+          <View >
+            <ThemedText>Terrain: </ThemedText>
+            <Picker
+              style={{
+                backgroundColor: 'white'
+              }}
+              selectedValue={terrainType}
+              onValueChange={(itemValue, itemIndex) =>
+                setTerrainType(itemValue)
+              }>
+              <Picker.Item label="Any" value="any" />
+              <Picker.Item label="Trail" value="trail" />
+              <Picker.Item label="Road" value="road" />
+              <Picker.Item label="Mixed" value="mixed" />
+            </Picker>
+          </View>
 
+          <View >
+            <ThemedText>Maximum Distance: </ThemedText>
+            <TextInput style={{
+              backgroundColor: 'white',
+              width: 50,
+            }}
+              // defaultValue='5'
+              value={routeDistance}
+              onChangeText={setRouteDistance}>
+            </TextInput>
+          </View>
 
-          <ThemedText>Terrain: </ThemedText>
-          <TextInput style={{
-            backgroundColor: 'white',
-            width: 50,
-          }}
-            // defaultValue='5'
-            value={terrainType}
-            onChangeText={setTerrainType}>
-          </TextInput>
-
-
-          <ThemedText>Maximum Distance: </ThemedText>
-          <TextInput style={{
-            backgroundColor: 'white',
-            width: 50,
-          }}
-            // defaultValue='5'
-            value={routeDistance}
-            onChangeText={setRouteDistance}>
-          </TextInput>
-
-
-
-          <ThemedText>Within: </ThemedText>
-          <TextInput style={{
-            backgroundColor: 'white',
-            width: 50,
-          }}
-            // defaultValue='5'
-            value={withinDistance}
-            onChangeText={setWithinDistance}>
-          </TextInput>
-          <ThemedText> mi</ThemedText>
+          <View >
+            <ThemedText>Within: </ThemedText>
+            <TextInput style={{
+              backgroundColor: 'white',
+              width: 50,
+            }}
+              // defaultValue='5'
+              value={withinDistance}
+              onChangeText={setWithinDistance}>
+            </TextInput>
+            <ThemedText> mi</ThemedText>
+          </View>
         </View>
       </ThemedView>
 
       <RWMList dist={parseInt(withinDistance)} terrain={terrainType} rtDist={parseInt(routeDistance)} maxPace={pace} />
-    </SafeAreaView>
+    </SafeAreaView >
 
   );
 }

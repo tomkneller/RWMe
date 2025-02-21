@@ -16,4 +16,5 @@ export type Route = {
     pace: string;
     hostName: string;
     distFromUser: number;
+    terrainType: string;
 }

@@ -54,11 +54,16 @@ export const filterByRouteDistance = (routes, distanceFilter) => {
  * Stub for filtering by route terrain type
  */
 export const filterByRouteTerrain = (routes, terrainFilter) => {
-  return routes.filter(route => {
-    const terrain = route.terrainType;
+  console.log(terrainFilter);
 
-    return terrain == terrainFilter;
-  })
+  if (terrainFilter != "any") {
+    return routes.filter(route => {
+      const terrain = route.terrainType;
+
+      return terrain == terrainFilter;
+    })
+  }
+  return routes;
 }
 
 /**

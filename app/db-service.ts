@@ -107,11 +107,12 @@ export const getSpecificRoute = async (routeId: number) => {
  * @param hostname Username of route host
  * @param additionalDetails additional details about the route that the user can provide
  * @param fileContent gpx file data contents
+ * @param terrainType The users selected type of terrain for the route [Trail/Road/Mixed]
  */
-export const createRoute = async (name: String, distance: Number, pace: String, lat: Number, long: Number, dateTime: String, hostname: String, additionalDetails: string, fileContent: string) => {
+export const createRoute = async (name: String, distance: Number, pace: String, lat: Number, long: Number, dateTime: String, hostname: String, additionalDetails: string, fileContent: string, terrainType: string) => {
 
     try {
-        const response = await axios.post(`${API_BASE_URL}/routes/create`, { name, distance, pace, lat, long, dateTime, hostname, additionalDetails, fileContent });
+        const response = await axios.post(`${API_BASE_URL}/routes/create`, { name, distance, pace, lat, long, dateTime, hostname, additionalDetails, fileContent, terrainType });
         console.log(response.data); // Success message and route ID
     } catch (error) {
         console.error("Error creating routes:", error);

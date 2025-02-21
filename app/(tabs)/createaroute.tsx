@@ -25,7 +25,7 @@ export default function CreateARoute() {
 
   const [routeNameText, setRouteNameText] = useState('');
 
-  const [selectedTerrainType, setSelectedTerrainType] = useState();
+  const [selectedTerrainType, setSelectedTerrainType] = useState("");
   let [routeDistance, setRouteDistance] = useState(0);
   let [routeStartLat, setRouteStartLat] = useState(0);
   let [routeStartLong, setRouteStartLong] = useState(0);
@@ -133,7 +133,7 @@ export default function CreateARoute() {
     }
 
     //TODO: Currently using current users name for accountname, should probably pass name from ID
-    await createRoute(routeNameText, routeDistance, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, startDate, accountName, additionalDetails, fileContent)
+    await createRoute(routeNameText, routeDistance, routePaceMins + ':' + routePaceSeconds, routeStartLat, routeStartLong, startDate, accountName, additionalDetails, fileContent, selectedTerrainType)
 
     router.push("/"); // Navigate home after successful route creation
   }
@@ -207,7 +207,7 @@ export default function CreateARoute() {
       <ThemedText type='default'>Distance: {routeDistance}</ThemedText>
       <ThemedText type='default'>Start Loc: {routeStartLat} {routeStartLong}</ThemedText>
 
-      //Picker for estimated average pace
+      {/* Picker for estimated average pace */}
       <ThemedText type='subtitle'>Select your estimated average pace</ThemedText>
       <View>
         <PacePicker onPaceChange={handlePaceChange} />
