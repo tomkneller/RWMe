@@ -9,10 +9,10 @@ interface PaceType {
 }
 
 interface PacePickerProps {
-    onValuesChange: (values: PaceType) => void;
+    onPaceChange: (values: PaceType) => void;
 }
 
-export const PacePicker: React.FC<PacePickerProps> = ({ onValuesChange }) => {
+export const PacePicker: React.FC<PacePickerProps> = ({ onPaceChange }) => {
     const [selectedPaceMins, setSelectedPaceMins] = useState<string | undefined>("00");
     const [selectedPaceSecs, setSelectedPaceSecs] = useState<string | undefined>("00");
 
@@ -21,16 +21,16 @@ export const PacePicker: React.FC<PacePickerProps> = ({ onValuesChange }) => {
     const handleMinsChange = (updatedMins?: string) => {
         setSelectedPaceMins(updatedMins)
 
-        if (onValuesChange) {
-            onValuesChange({ mins: updatedMins, secs: selectedPaceSecs });
+        if (onPaceChange) {
+            onPaceChange({ mins: updatedMins, secs: selectedPaceSecs });
         }
     }
 
     const handleSecsChange = (updatedSecs?: string) => {
         setSelectedPaceSecs(updatedSecs)
 
-        if (onValuesChange) {
-            onValuesChange({ mins: selectedPaceMins, secs: updatedSecs });
+        if (onPaceChange) {
+            onPaceChange({ mins: selectedPaceMins, secs: updatedSecs });
         }
     }
 

@@ -8,20 +8,20 @@ import AuthContext from '../AuthContext';
 import { PacePicker } from '../../components/PacePicker';
 import { ThemedText } from '../../components/ThemedText';
 
-interface PaceState {
-  mins: string | undefined;
-  secs: string | undefined;
-}
+// interface PaceState {
+//   mins: string | undefined;
+//   secs: string | undefined;
+// }
 
 export default function DevTools({ }) {
   useContext(AuthContext);
 
-  const [selectedPaces, setSelectedPaces] = useState<PaceState>({ mins: "01", secs: "00" });
+  // const [selectedPaces, setSelectedPaces] = useState<PaceState>({ mins: "01", secs: "00" });
 
 
-  const handleValuesChange = (newValues: { mins: string | undefined, secs: string | undefined }) => {
-    setSelectedPaces(newValues);
-  }
+  // const handlePaceChange = (newValues: { mins: string | undefined, secs: string | undefined }) => {
+  //   setSelectedPaces(newValues);
+  // }
 
   return (
     <ParallaxScrollView
@@ -39,8 +39,8 @@ export default function DevTools({ }) {
       <Button title='Create User Account' onPress={() => { router.push("/createaccount") }} />
       <Button title='View User Profile' onPress={() => { router.push("/profile") }} />
       <Button title='Login Screen' onPress={() => { router.push("/loginScreen") }} />
-      <PacePicker onValuesChange={handleValuesChange} />
-      <ThemedText>{selectedPaces.mins} : {selectedPaces.secs}</ThemedText>
+      {/* <PacePicker onPaceChange={handlePaceChange} /> */}
+      {/* <ThemedText>{selectedPaces.mins} : {selectedPaces.secs}</ThemedText> */}
 
     </ParallaxScrollView>
   );

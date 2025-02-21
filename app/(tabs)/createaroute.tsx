@@ -11,6 +11,13 @@ import { createRoute } from '../db-service';
 import { getStartCoordinates, calculateDistances } from '../gpxParsingUtils';
 import { router } from 'expo-router';
 import AuthContext from '../AuthContext';
+import { PacePicker } from '../../components/PacePicker';
+
+interface PaceState {
+  mins: string | undefined;
+  secs: string | undefined;
+}
+
 
 export default function CreateARoute() {
   const [mode, setMode] = useState('date');
@@ -25,11 +32,13 @@ export default function CreateARoute() {
   const [date, setDate] = useState<Date>(new Date());
   const [fileContent, setFileContent] = useState('');
   const [validationErrors, setValidationErrors] = useState(['']);
+  const [showPacePickerModal, setShowPacePickerModal] = useState(false);
+  const [selectedPaces, setSelectedPaces] = useState<PaceState>({ mins: "01", secs: "00" });
 
   const [additionalDetails, setAdditionalDetails] = useState('');
 
-  const [routePaceMins, setRoutePaceMins] = useState('00');
-  const [routePaceSeconds, setRoutePaceSeconds] = useState('00');
+  const [routePaceMins, setRoutePaceMins] = useState<string | undefined>('01');
+  const [routePaceSeconds, setRoutePaceSeconds] = useState<string | undefined>('00');
 
   const { user } = useContext(AuthContext);
   let accountName = "placeholder";
@@ -62,6 +71,13 @@ export default function CreateARoute() {
     setRoutePaceSeconds(newPaceSeconds);
   };
 
+  const handlePaceChange = (newValues: { mins: string | undefined, secs: string | undefined }) => {
+    // setSelectedPaces(newValues);
+    setRoutePaceMins(newValues.mins);
+    setRoutePaceSeconds(newValues.secs);
+
+  }
+
   const handleDetailsChange = (newAdditionalDetails: string) => {
     setAdditionalDetails(newAdditionalDetails); // Update the state with the new text
   };
@@ -79,10 +95,12 @@ export default function CreateARoute() {
     showMode('time');
   };
 
+  const showPacePicker = () => {
+    setShowPacePickerModal(true)
+  }
+
 
   const handleSubmit = async () => {
-    console.log("test");
-
     const errors: string[] = [];
 
     const startDate = date.toISOString().slice(0, 19).replace('T', ' ');
@@ -158,6 +176,10 @@ export default function CreateARoute() {
     readGPXRouteDistance();
   }
 
+
+
+
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
@@ -185,17 +207,19 @@ export default function CreateARoute() {
       <ThemedText type='default'>Distance: {routeDistance}</ThemedText>
       <ThemedText type='default'>Start Loc: {routeStartLat} {routeStartLong}</ThemedText>
 
-      {/* TODO: picker for Pace range (mandatory) */}
+      //Picker for estimated average pace
       <ThemedText type='subtitle'>Select your estimated average pace</ThemedText>
+      <View>
+        <PacePicker onPaceChange={handlePaceChange} />
+      </View>
       <View
         style={{
           flexDirection: 'row'
         }}>
-        <TextInput style={{ backgroundColor: 'white' }} maxLength={2} inputMode='numeric' placeholder='00' onChangeText={handlePaceMinsChange} value={routePaceMins}></TextInput>
-        <ThemedText type='default'>:</ThemedText>
-        <TextInput style={{ backgroundColor: 'white' }} maxLength={2} inputMode='numeric' placeholder='00' onChangeText={handlePaceSecondsChange} value={routePaceSeconds}></TextInput>
-        <ThemedText type='default'>min/mi</ThemedText>
-      </View>
+        <ThemedText>{routePaceMins} : {routePaceSeconds}</ThemedText>
+        <ThemedText type='default'> min/km</ThemedText></View>
+
+
 
       {/* TODO: Start time (mandatory) - use time picker */}
       <ThemedText type='subtitle'>Time & Date</ThemedText>
