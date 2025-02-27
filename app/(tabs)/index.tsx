@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, View } from 'react-native';
+import { Button, GestureResponderEvent, Modal, StyleSheet, TextInput, View } from 'react-native';
 import { RWMList } from '@/components/RWMList';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ThemedText } from '@/components/ThemedText';
@@ -6,6 +6,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import { PacePicker } from '../../components/PacePicker';
+import { Input } from '@rneui/base';
 
 export default function HomeScreen() {
   const [withinDistance, setWithinDistance] = useState('');
@@ -16,6 +17,7 @@ export default function HomeScreen() {
   const [routePaceMins, setRoutePaceMins] = useState<string | undefined>('00');
   const [routePaceSeconds, setRoutePaceSeconds] = useState<string | undefined>('00');
 
+  const [modalOpen, setModalOpen] = useState(false);
 
 
   const handlePaceChange = (newValues: { mins: string | undefined, secs: string | undefined }) => {
@@ -26,64 +28,77 @@ export default function HomeScreen() {
   }
 
 
+  function openFiltersModal(event: GestureResponderEvent): void {
+    setModalOpen(true);
+  }
+
   return (
     <SafeAreaView
       style={{ paddingBottom: 45 }}
     >
-      <ThemedView >
-        <View style={{ flexDirection: 'column' }}>
-          <View >
-            <ThemedText>Max Pace: </ThemedText>
-            <PacePicker onPaceChange={handlePaceChange} />
-          </View>
+      <Button title='Filters' onPress={openFiltersModal}></Button>
+      <Modal
+        visible={modalOpen}
+        animationType="slide"
+        transparent={false}>
+        <ThemedView >
+          <View style={{ flexDirection: 'column' }}>
+            <View >
+              <ThemedText type='subtitle'>Sort By: </ThemedText>
 
-          <View >
-            <ThemedText>Terrain: </ThemedText>
-            <Picker
-              style={{
-                backgroundColor: 'white'
+            </View>
+            <View >
+              <ThemedText type='subtitle'>Max Pace: </ThemedText>
+              <PacePicker onPaceChange={handlePaceChange} />
+            </View>
+
+            <View >
+              <ThemedText type='subtitle'>Terrain: </ThemedText>
+              <Picker
+                style={{
+                  backgroundColor: 'white'
+                }}
+                selectedValue={terrainType}
+                onValueChange={(itemValue, itemIndex) =>
+                  setTerrainType(itemValue)
+                }>
+                <Picker.Item label="Any" value="any" />
+                <Picker.Item label="Trail" value="trail" />
+                <Picker.Item label="Road" value="road" />
+                <Picker.Item label="Mixed" value="mixed" />
+              </Picker>
+            </View>
+
+            <View >
+              <ThemedText type='subtitle'>Maximum Distance: </ThemedText>
+              <TextInput style={{
+                backgroundColor: 'white',
+                width: 50,
               }}
-              selectedValue={terrainType}
-              onValueChange={(itemValue, itemIndex) =>
-                setTerrainType(itemValue)
-              }>
-              <Picker.Item label="Any" value="any" />
-              <Picker.Item label="Trail" value="trail" />
-              <Picker.Item label="Road" value="road" />
-              <Picker.Item label="Mixed" value="mixed" />
-            </Picker>
-          </View>
+                // defaultValue='5'
+                value={routeDistance}
+                onChangeText={setRouteDistance}>
+              </TextInput>
+            </View>
 
-          <View >
-            <ThemedText>Maximum Distance: </ThemedText>
-            <TextInput style={{
-              backgroundColor: 'white',
-              width: 50,
-            }}
-              // defaultValue='5'
-              value={routeDistance}
-              onChangeText={setRouteDistance}>
-            </TextInput>
+            <View >
+              <ThemedText type='subtitle'>Within: </ThemedText>
+              <TextInput style={{
+                backgroundColor: 'white',
+                width: 50,
+              }}
+                // defaultValue='5'
+                value={withinDistance}
+                onChangeText={setWithinDistance}>
+              </TextInput>
+              <ThemedText> mi</ThemedText>
+            </View>
           </View>
-
-          <View >
-            <ThemedText>Within: </ThemedText>
-            <TextInput style={{
-              backgroundColor: 'white',
-              width: 50,
-            }}
-              // defaultValue='5'
-              value={withinDistance}
-              onChangeText={setWithinDistance}>
-            </TextInput>
-            <ThemedText> mi</ThemedText>
-          </View>
-        </View>
-      </ThemedView>
-
+        </ThemedView>
+        <Button title='Show Results' onPress={() => setModalOpen(false)}></Button>
+      </Modal>
       <RWMList dist={parseInt(withinDistance)} terrain={terrainType} rtDist={parseInt(routeDistance)} maxPace={routePaceMins + ':' + routePaceSeconds} />
     </SafeAreaView >
-    // routePaceMins + ':' + routePaceSeconds
   );
 }
 

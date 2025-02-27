@@ -87,7 +87,6 @@ export const RWMList = (props: { dist: number; terrain: string; rtDist: number; 
             {!locationLoading && filteredLocations.map((route) => (
                 <RWMListItem key={route.idroutes} routeData={route} />
             ))}
-            <Text></Text>
         </ScrollView >
     );
 }
