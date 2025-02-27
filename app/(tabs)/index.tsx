@@ -5,12 +5,26 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
+import { PacePicker } from '../../components/PacePicker';
 
 export default function HomeScreen() {
   const [withinDistance, setWithinDistance] = useState('');
   const [terrainType, setTerrainType] = useState('any');
   const [routeDistance, setRouteDistance] = useState('');
   const [pace, setPace] = useState('');
+
+  const [routePaceMins, setRoutePaceMins] = useState<string | undefined>('00');
+  const [routePaceSeconds, setRoutePaceSeconds] = useState<string | undefined>('00');
+
+
+
+  const handlePaceChange = (newValues: { mins: string | undefined, secs: string | undefined }) => {
+    // setSelectedPaces(newValues);
+    setRoutePaceMins(newValues.mins);
+    setRoutePaceSeconds(newValues.secs);
+
+  }
+
 
   return (
     <SafeAreaView
@@ -20,14 +34,7 @@ export default function HomeScreen() {
         <View style={{ flexDirection: 'column' }}>
           <View >
             <ThemedText>Max Pace: </ThemedText>
-            <TextInput style={{
-              backgroundColor: 'white',
-              width: 50,
-            }}
-              defaultValue='200'
-              value={pace}
-              onChangeText={setPace}>
-            </TextInput>
+            <PacePicker onPaceChange={handlePaceChange} />
           </View>
 
           <View >
@@ -74,9 +81,9 @@ export default function HomeScreen() {
         </View>
       </ThemedView>
 
-      <RWMList dist={parseInt(withinDistance)} terrain={terrainType} rtDist={parseInt(routeDistance)} maxPace={pace} />
+      <RWMList dist={parseInt(withinDistance)} terrain={terrainType} rtDist={parseInt(routeDistance)} maxPace={routePaceMins + ':' + routePaceSeconds} />
     </SafeAreaView >
-
+    // routePaceMins + ':' + routePaceSeconds
   );
 }
 

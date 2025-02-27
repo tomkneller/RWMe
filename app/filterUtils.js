@@ -1,5 +1,5 @@
 /**
- * 
+ * function for converting degrees into radians
  * @param {number} deg degrees represented as a number
  * @returns radian calculated from degrees
  */
@@ -8,7 +8,7 @@ const deg2rad = (deg) => {
 };
 
 /**
-* 
+* Function for calculating the distance between 2 sets of latititudes and longitudes
 * @param lat1 latitude of users origin point
 * @param lon1 longitude of users origin point
 * @param lat2 latitude of event origin
@@ -31,7 +31,7 @@ export const calculateDistance = (lat1, lon1, lat2, lon2) => {
 
 
 /**
- * 
+ * Function for filtering routes list by those less than passed in as distanceFilter parameter
  * @param {Array[{}]} routes routes array containing route data
  * @param {number} distanceFilter the user entered maxium amount of distance the route should cover
  * @returns routes filtered to those within the specified maximum distance, if the parameter is invalid the unfiltered routes are returned
@@ -51,11 +51,11 @@ export const filterByRouteDistance = (routes, distanceFilter) => {
 }
 
 /**
- * Stub for filtering by route terrain type
+ * Function for filtering route list by route terrain type
+ * @param {Array[{}]} routes routes array containing route data
+ * @param {string} terrainFilter the terrain type to filter by (can be Trail, Road, Mixed or Any)
  */
 export const filterByRouteTerrain = (routes, terrainFilter) => {
-  console.log(terrainFilter);
-
   if (terrainFilter != "any") {
     return routes.filter(route => {
       const terrain = route.terrainType;
@@ -67,10 +67,18 @@ export const filterByRouteTerrain = (routes, terrainFilter) => {
 }
 
 /**
- * Stub for filtering by a pace range
+ * Filtering by a maximum pace
+ * @param {Array[{}]} routes routes array containing route data
  */
 export const filterByRoutePace = (routes, paceFilter) => {
+  if (paceFilter != "00:00") {
+    return routes.filter(route => {
+      const pace = route.pace;
 
+      return pace <= paceFilter;
+    })
+  }
+  return routes;
 }
 
 /**

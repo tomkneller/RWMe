@@ -4,7 +4,7 @@ import { Route } from '../app/models';
 import { getRoutes } from '../app/db-service';
 import { RefreshControl, ScrollView, Text } from 'react-native';
 import { useLocation } from '@/hooks/useLocation';
-import { filterByRouteDistance, filterByRouteLocation, calculateDistance, filterByRouteTerrain } from '@/app/filterUtils';
+import { filterByRouteDistance, filterByRouteLocation, calculateDistance, filterByRouteTerrain, filterByRoutePace } from '@/app/filterUtils';
 
 export const RWMList = (props: { dist: number; terrain: string; rtDist: number; maxPace: string; }) => {
 
@@ -18,7 +18,7 @@ export const RWMList = (props: { dist: number; terrain: string; rtDist: number; 
     const [isilterByRouteLocationEnabled, setIsilterByRouteLocationEnabled] = useState(false);
     const [isFilterByRouteDistanceEnabled, setIsFilterByRouteDistanceEnabled] = useState(false);
     const [isFilterByTerrainTypeEnabled, setIsFilterByTerrainTypeEnabled] = useState(false);
-
+    const [isFilterByPaceEnabled, setIsFilterByPaceEnabled] = useState(false);
 
 
     if (!locationLoading) {
@@ -49,6 +49,7 @@ export const RWMList = (props: { dist: number; terrain: string; rtDist: number; 
         setIsFilterByRouteDistanceEnabled(rtDist !== null && !isNaN(Number(rtDist)) && Number(rtDist) >= 0);
         setIsilterByRouteLocationEnabled(dist !== null && !isNaN(Number(dist)) && Number(dist) >= 0);
         setIsFilterByTerrainTypeEnabled(terrain != "any");
+        setIsFilterByPaceEnabled(maxPace != null && maxPace != '00:00' && maxPace != '');
 
 
         let filtered = routes;
@@ -60,6 +61,8 @@ export const RWMList = (props: { dist: number; terrain: string; rtDist: number; 
 
         filtered = isFilterByTerrainTypeEnabled ? filterByRouteTerrain(filtered, terrain) : filtered;
 
+        filtered = isFilterByPaceEnabled ? filterByRoutePace(filtered, maxPace) : filtered;
+
         setFilteredLocations(filtered);
     }
 
@@ -68,7 +71,7 @@ export const RWMList = (props: { dist: number; terrain: string; rtDist: number; 
 
         applyFilters();
 
-    }, [loadDataCallback, locationLoading, dist, terrain, rtDist, maxPace, isFilterByRouteDistanceEnabled, isilterByRouteLocationEnabled, isFilterByTerrainTypeEnabled]);
+    }, [loadDataCallback, locationLoading, dist, terrain, rtDist, maxPace, isFilterByRouteDistanceEnabled, isilterByRouteLocationEnabled, isFilterByTerrainTypeEnabled, isFilterByPaceEnabled]);
 
     const onRefresh = useCallback(() => { // Function for pull-to-refresh
         console.log("Refreshing");
