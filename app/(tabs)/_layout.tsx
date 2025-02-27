@@ -1,12 +1,13 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
+import { Button, Image, Platform } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import ProfileHeaderIcon from '../../components/ui/profileHeaderIcon';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -14,8 +15,9 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        headerRight: () => <ProfileHeaderIcon />,
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
+        headerShown: true,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
