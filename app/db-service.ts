@@ -41,6 +41,27 @@ export const getUser = async (userId: number) => {
     }
 }
 
+
+/**
+ * Get pending requests for a user
+ */
+export const getPendingRequestsForUser = async (userId: number) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/users/invite_requests/host?host_id=${userId}`);
+
+        if (response.data) {
+            return response.data;
+        }
+        else {
+            return null;
+        }
+
+
+    } catch (error) {
+        console.error('Error fetching requests:', error.response.data);
+    }
+}
+
 /**
  * Create a new user in the users database
  * @param name users full name

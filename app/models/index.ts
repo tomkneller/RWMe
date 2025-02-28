@@ -21,8 +21,10 @@ export type Route = {
 
 // Placeholder
 export type Request = {
-    id: number;
-    routeName: string;
-    usersname: string;
-    date: string;
+    request_id: number;
+    host_id: number;
+    user_id: number;
+    route_id: number;
+    request_date: string;
+    status: string;
 }
