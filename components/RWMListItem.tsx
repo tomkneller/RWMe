@@ -2,10 +2,26 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Button, Image, View } from 'react-native';
 import { Route } from '../app/models';
+import { getUser } from '../app/db-service';
+import { useState } from 'react';
 
 export const RWMListItem: React.FC<{
     routeData: Route;
-}> = ({ routeData: { idroutes, routeName, lat, longi, distance, pace, hostName, distFromUser } }) => {
+}> = ({ routeData: { idroutes, routeName, lat, longi, distance, pace, host_id, distFromUser } }) => {
+
+    const [userName, setUserName] = useState('')
+
+    async function getHostName() {
+        const hostName = await getUser(host_id);
+
+        console.log("hostname");
+
+        console.log(hostName);
+
+        setUserName(hostName);
+    }
+
+    getHostName();
 
     return (
         <ThemedView style={{ backgroundColor: '#002531', marginTop: 5 }}>
@@ -16,7 +32,7 @@ export const RWMListItem: React.FC<{
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <Image style={{ height: 25, width: 25, margin: 4 }} source={require("@/assets/images/avatar.png")} />
                 <ThemedText style={{ fontSize: 12 }} type='defaultSemiBold'>Host: </ThemedText>
-                <ThemedText id='routeHost'>{hostName}</ThemedText>
+                <ThemedText id='routeHost'>{userName}</ThemedText>
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
                 <View style={{ flexDirection: 'column' }}>

@@ -17,6 +17,31 @@ export const getUsers = async () => {
 };
 
 /**
+ * Get a users name by user id
+ */
+export const getUser = async (userId: number) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/users/name?idusers=${userId}`);
+
+        // console.log("response data");
+
+        // console.log(response.data.username.name); // The user data from the database
+        //console.log(response);
+
+        if (response.data.username) {
+            return response.data.username.name;
+        }
+        else {
+            return null;
+        }
+
+
+    } catch (error) {
+        console.error('Error fetching user:', error.response.data);
+    }
+}
+
+/**
  * Create a new user in the users database
  * @param name users full name
  * @param email users email address
@@ -104,15 +129,15 @@ export const getSpecificRoute = async (routeId: number) => {
  * @param lat latitude of route start location
  * @param long longitude of route start location
  * @param dateTime Start date and time of event (format: YYYY-MM-DD HH:MM:SS)
- * @param hostname Username of route host
+ * @param host_id Username of route host
  * @param additionalDetails additional details about the route that the user can provide
  * @param fileContent gpx file data contents
  * @param terrainType The users selected type of terrain for the route [Trail/Road/Mixed]
  */
-export const createRoute = async (name: String, distance: Number, pace: String, lat: Number, long: Number, dateTime: String, hostname: String, additionalDetails: string, fileContent: string, terrainType: string) => {
+export const createRoute = async (name: String, distance: Number, pace: String, lat: Number, long: Number, dateTime: String, host_id: String, additionalDetails: string, fileContent: string, terrainType: string) => {
 
     try {
-        const response = await axios.post(`${API_BASE_URL}/routes/create`, { name, distance, pace, lat, long, dateTime, hostname, additionalDetails, fileContent, terrainType });
+        const response = await axios.post(`${API_BASE_URL}/routes/create`, { name, distance, pace, lat, long, dateTime, host_id, additionalDetails, fileContent, terrainType });
         console.log(response.data); // Success message and route ID
     } catch (error) {
         console.error("Error creating routes:", error);

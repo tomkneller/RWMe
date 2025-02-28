@@ -58,6 +58,14 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="pendingRequests"
+        options={{
+          href: null,
+          title: 'Pending',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="loginScreen"
         options={{
           title: 'Login',

@@ -11,7 +11,7 @@ export const MapMarkerDetails = (props) => {
             <ThemedText type='defaultSemiBold'>Estimated Pace:</ThemedText>
             <ThemedText id='routePace'>{props.pace} min/mi</ThemedText>
             <ThemedText type='defaultSemiBold'>Hosted by:</ThemedText>
-            <ThemedText id='routeHost'>{props.hostName}</ThemedText>
+            <ThemedText id='routeHost'>{props.host_id}</ThemedText>
             <ThemedText type='defaultSemiBold'>Distance away:</ThemedText>
             <ThemedText id='distanceFromUser'>{props.distanceAway} miles</ThemedText>
             <ThemedText type='defaultSemiBold'>Date:</ThemedText>

@@ -14,7 +14,15 @@ export type Route = {
     routeDateTime: string;
     distance: number;
     pace: string;
-    hostName: string;
+    host_id: number;
     distFromUser: number;
     terrainType: string;
+}
+
+// Placeholder
+export type Request = {
+    id: number;
+    routeName: string;
+    usersname: string;
+    date: string;
 }

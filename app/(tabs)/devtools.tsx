@@ -7,11 +7,15 @@ import { useContext, useState } from 'react';
 import AuthContext from '../AuthContext';
 import { PacePicker } from '../../components/PacePicker';
 import { ThemedText } from '../../components/ThemedText';
+import { getUser } from '../db-service';
 
 // interface PaceState {
 //   mins: string | undefined;
 //   secs: string | undefined;
 // }
+
+
+
 
 export default function DevTools({ }) {
   useContext(AuthContext);
@@ -39,6 +43,10 @@ export default function DevTools({ }) {
       <Button title='Create User Account' onPress={() => { router.push("/createaccount") }} />
       <Button title='View User Profile' onPress={() => { router.push("/profile") }} />
       <Button title='Login Screen' onPress={() => { router.push("/loginScreen") }} />
+      <Button title='Pending Requests' onPress={() => { router.push("/pendingRequests") }} />
+
+      {/* <Button title='test' onPress={() => getUser(1)}></Button> */}
+
       {/* <PacePicker onPaceChange={handlePaceChange} /> */}
       {/* <ThemedText>{selectedPaces.mins} : {selectedPaces.secs}</ThemedText> */}
 

@@ -19,7 +19,7 @@ interface Route {
   dateTime: string;
   description: string;
   distance: number;
-  hostName: string;
+  host_id: string;
   id: number;
   latlng: {
     latitude: number;
@@ -59,14 +59,14 @@ export default function MapViewer() {
 
         const routeData = await getRoutes();
 
-        const processedMarkers = routeData.map((route: { idroutes: number, lat: number, longi: number, routeName: string, description: string, hostName: string, distance: number, pace: string, routeDateTime: string }) => ({
+        const processedMarkers = routeData.map((route: { idroutes: number, lat: number, longi: number, routeName: string, description: string, host_id: string, distance: number, pace: string, routeDateTime: string }) => ({
           id: route.idroutes,
           title: route.routeName,
-          description: "Hosted By:" + route.hostName,
+          description: "Hosted By:" + route.host_id,
           latlng: { latitude: route.lat, longitude: route.longi },
           distance: route.distance,
           pace: route.pace,
-          hostName: route.hostName,
+          host_id: route.host_id,
           dateTime: route.routeDateTime,
         }));
         setRoutes(processedMarkers);
@@ -157,7 +157,7 @@ export default function MapViewer() {
             routename={selectedMarker.title}
             distance={selectedMarker.distance}
             pace={selectedMarker.pace}
-            hostName={selectedMarker.hostName}
+            host_id={selectedMarker.host_id}
             dateTime={selectedMarker.dateTime}
             distanceAway='100'
           />
