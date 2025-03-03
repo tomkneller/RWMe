@@ -61,7 +61,7 @@ export default function TabLayout() {
         name="pendingRequests"
         options={{
           href: null,
-          title: 'Pending',
+          title: 'Pending Invite Requests',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
       />

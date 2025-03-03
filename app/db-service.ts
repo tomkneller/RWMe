@@ -167,7 +167,7 @@ export const getRoutes = async () => {
 export const getSpecificRoute = async (routeId: number) => {
     try {
         const response = await axios.get(`${API_BASE_URL}/routes/${routeId}`);
-        return response.data;
+        return response.data[0];
     } catch (error) {
         console.error("error fetching specified route", error);
         return null;

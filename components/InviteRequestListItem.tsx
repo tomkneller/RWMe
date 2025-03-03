@@ -1,10 +1,11 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { Button, Image, Modal, Text, TextInput, View } from 'react-native';
+import { Button, View } from 'react-native';
 import { Request } from '../app/models';
 import { Avatar } from '@rneui/base';
 import { useState } from 'react';
-import { acceptRequest, getUser, rejectRequest } from '../app/db-service';
+import { getSpecificRoute, getUser } from '../app/db-service';
+import { getDateTimeReadable, getTimeAgo } from '@/app/utils';
 
 export const InviteRequestListItem: React.FC<{
     requestData: Request;
@@ -12,7 +13,9 @@ export const InviteRequestListItem: React.FC<{
     onReject: any;
 }> = ({ requestData: { request_id, user_id, route_id, request_date, status }, onAccept, onReject }) => {
 
-    const [userName, setUserName] = useState('')
+    const [userName, setUserName] = useState('');
+    const [routeName, setRouteName] = useState('');
+
 
     async function getHostName() {
         const hostName = await getUser(user_id);
@@ -21,6 +24,21 @@ export const InviteRequestListItem: React.FC<{
     }
 
     getHostName();
+
+    async function getRouteName() {
+        try {
+            const route = await getSpecificRoute(route_id);
+            setRouteName(route.routeName);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    getRouteName();
+
+
+
+
 
     return (
         <ThemedView>
@@ -32,12 +50,12 @@ export const InviteRequestListItem: React.FC<{
                     title="BP"
                     containerStyle={{ backgroundColor: "blue" }}
                 />
-                <ThemedText>{userName}</ThemedText>
+                <ThemedText> {userName}</ThemedText>
             </View>
             {/* replace with route name */}
-            <ThemedText>{route_id}</ThemedText>
+            <ThemedText>{routeName}</ThemedText>
             <ThemedText type='subtitle'>{status}</ThemedText>
-            <ThemedText>{request_date}</ThemedText>
+            <ThemedText>{getDateTimeReadable(request_date)} ({getTimeAgo(request_date)})</ThemedText>
             <View style={{ flexDirection: 'row' }}>
                 <Button title='Accept' onPress={() => onAccept(request_id)} />
                 <Button title='Decline' onPress={() => onReject(request_id)} />

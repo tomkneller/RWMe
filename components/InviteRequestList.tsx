@@ -2,7 +2,7 @@ import { InviteRequestListItem } from '@/components/InviteRequestListItem';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Request } from '../app/models';
 
-import { acceptRequest, getPendingRequestsForUser, getRoutes, rejectRequest } from '../app/db-service';
+import { acceptRequest, getPendingRequestsForUser, rejectRequest } from '../app/db-service';
 import { RefreshControl, ScrollView, Text } from 'react-native';
 import AuthContext from '../app/AuthContext';
 import { ThemedText } from './ThemedText';
