@@ -45,11 +45,6 @@ export default function DevTools({ }) {
       <Button title='Login Screen' onPress={() => { router.push("/loginScreen") }} />
       <Button title='Pending Requests' onPress={() => { router.push("/pendingRequests") }} />
 
-      {/* <Button title='test' onPress={() => getUser(1)}></Button> */}
-
-      {/* <PacePicker onPaceChange={handlePaceChange} /> */}
-      {/* <ThemedText>{selectedPaces.mins} : {selectedPaces.secs}</ThemedText> */}
-
     </ParallaxScrollView>
   );
 }

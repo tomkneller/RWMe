@@ -13,6 +13,7 @@ export const InviteRequestList = () => {
     const loadDataCallback = useCallback(async () => {
         setRefreshing(true); // Set refreshing to true before fetching data
         try {
+            //TODO replace parameter '2' with current user id 
             setPendingRequests(await getPendingRequestsForUser(2));
         } catch (error) {
             console.error("Error loading data:", error);

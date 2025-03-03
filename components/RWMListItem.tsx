@@ -1,8 +1,8 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { Button, Image, View } from 'react-native';
+import { Button, GestureResponderEvent, Image, View } from 'react-native';
 import { Route } from '../app/models';
-import { getUser } from '../app/db-service';
+import { createRequest, getUser } from '../app/db-service';
 import { useState } from 'react';
 
 export const RWMListItem: React.FC<{
@@ -14,14 +14,15 @@ export const RWMListItem: React.FC<{
     async function getHostName() {
         const hostName = await getUser(host_id);
 
-        console.log("hostname");
-
-        console.log(hostName);
-
         setUserName(hostName);
     }
 
     getHostName();
+
+    function requestJoin(route_id: number, sender_id: number): void {
+        console.log('request join', route_id);
+        createRequest(route_id, sender_id);
+    }
 
     return (
         <ThemedView style={{ backgroundColor: '#002531', marginTop: 5 }}>
@@ -50,7 +51,8 @@ export const RWMListItem: React.FC<{
                 </View>
             </View>
             <Image style={{ height: 150, width: '100%', flex: 1, justifyContent: 'center' }} source={{ uri: `https://maps.googleapis.com/maps/api/staticmap?size=400x400&center=${lat},${longi}&zoom=12&key=` }} />
-            <Button title='Join' />
+            {/* //TODO: Replace 2 with current logged in userid */}
+            <Button title='Join' onPress={() => requestJoin(idroutes, 2)} />
             <Button title='Message' />
         </ThemedView>
     );

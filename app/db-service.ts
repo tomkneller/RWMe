@@ -62,6 +62,22 @@ export const getPendingRequestsForUser = async (userId: number) => {
     }
 }
 
+
+/**
+ * Create a new pending request
+ */
+export const createRequest = async (route_id: number, sender_id: number) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/users/invite_requests`, { route_id, sender_id });
+        console.log(response.data); // Success message and user ID
+    } catch (error: any) {
+        console.error("Error creating request:", error.response.data);
+    }
+};
+
+
+
+
 /**
  * Create a new user in the users database
  * @param name users full name

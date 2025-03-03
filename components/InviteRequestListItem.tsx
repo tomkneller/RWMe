@@ -3,10 +3,16 @@ import { ThemedView } from '@/components/ThemedView';
 import { Button, Image, Modal, Text, TextInput, View } from 'react-native';
 import { Request } from '../app/models';
 import { Avatar } from '@rneui/base';
+import { useState } from 'react';
+import { getUser } from '../app/db-service';
 
 export const InviteRequestListItem: React.FC<{
     requestData: Request;
 }> = ({ requestData: { request_id, user_id, route_id, request_date, status } }) => {
+
+
+    const [userName, setUserName] = useState('')
+
 
     const handleAcceptRequest = (id: number) => {
         console.log("Accept request", id);
@@ -16,6 +22,15 @@ export const InviteRequestListItem: React.FC<{
     const handleRejectRequest = (id: number) => {
         console.log("reject request", id);
     }
+
+
+    async function getHostName() {
+        const hostName = await getUser(user_id);
+
+        setUserName(hostName);
+    }
+
+    getHostName();
 
     return (
         <ThemedView>
@@ -27,8 +42,7 @@ export const InviteRequestListItem: React.FC<{
                     title="BP"
                     containerStyle={{ backgroundColor: "blue" }}
                 />
-                {/* replace with user name */}
-                <ThemedText>{user_id}</ThemedText>
+                <ThemedText>{userName}</ThemedText>
             </View>
             {/* replace with route name */}
             <ThemedText>{route_id}</ThemedText>
