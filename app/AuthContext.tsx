@@ -53,16 +53,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const login = async (userData: { name: string, password: string }) => {
         console.log(userData);
 
+
         try {
             //API login request
-            const { accessToken, refreshToken } = await apiLogin(userData);
+            const { accessToken, refreshToken, user } = await apiLogin(userData);
 
 
-            await SecureStore.setItemAsync('user', JSON.stringify(userData)); // Store user data
+            await SecureStore.setItemAsync('user', JSON.stringify(user)); // Store user data
             await SecureStore.setItemAsync('accessToken', accessToken); // Store access token
             // ... (store refresh token if needed - using SecureStore)
 
-            setUser(userData);
+            setUser(user);
         }
         catch (error) {
             console.error("Login Error: ", error);

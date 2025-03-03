@@ -110,7 +110,6 @@ export const apiLogin = async (userData: UserAccount) => {
             await SecureStore.setItemAsync('refreshToken', refreshToken);
             await SecureStore.setItemAsync('user', JSON.stringify(user)); // Store user object
 
-
             //Return user data
             return { accessToken, refreshToken, user };
 
