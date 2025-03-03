@@ -1,11 +1,14 @@
 import { InviteRequestListItem } from '@/components/InviteRequestListItem';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Request } from '../app/models';
 
 import { getPendingRequestsForUser, getRoutes } from '../app/db-service';
 import { RefreshControl, ScrollView, Text } from 'react-native';
+import AuthContext from '../app/AuthContext';
+import { ThemedText } from './ThemedText';
 
 export const InviteRequestList = () => {
+    const { user } = useContext(AuthContext);
 
     const [refreshing, setRefreshing] = useState(false);
     const [pendingRequests, setPendingRequests] = useState<Request[]>([]);
@@ -13,8 +16,7 @@ export const InviteRequestList = () => {
     const loadDataCallback = useCallback(async () => {
         setRefreshing(true); // Set refreshing to true before fetching data
         try {
-            //TODO replace parameter '2' with current user id 
-            setPendingRequests(await getPendingRequestsForUser(2));
+            setPendingRequests(await getPendingRequestsForUser(user.idusers));
         } catch (error) {
             console.error("Error loading data:", error);
         } finally {
@@ -39,9 +41,10 @@ export const InviteRequestList = () => {
             refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }>
-            {pendingRequests.map((request) => (
+            {pendingRequests ? (pendingRequests.map((request) => (
                 <InviteRequestListItem key={request.request_id} requestData={request} />
-            ))}
+            ))
+            ) : <ThemedText>LOLLOOOPOLL</ThemedText>}
         </ScrollView >
     );
 }

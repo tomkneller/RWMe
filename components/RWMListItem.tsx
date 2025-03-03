@@ -3,11 +3,14 @@ import { ThemedView } from '@/components/ThemedView';
 import { Button, GestureResponderEvent, Image, View } from 'react-native';
 import { Route } from '../app/models';
 import { createRequest, getUser } from '../app/db-service';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import AuthContext from '../app/AuthContext';
 
 export const RWMListItem: React.FC<{
     routeData: Route;
 }> = ({ routeData: { idroutes, routeName, lat, longi, distance, pace, host_id, distFromUser } }) => {
+
+    const { user } = useContext(AuthContext);
 
     const [userName, setUserName] = useState('')
 
@@ -51,8 +54,7 @@ export const RWMListItem: React.FC<{
                 </View>
             </View>
             <Image style={{ height: 150, width: '100%', flex: 1, justifyContent: 'center' }} source={{ uri: `https://maps.googleapis.com/maps/api/staticmap?size=400x400&center=${lat},${longi}&zoom=12&key=` }} />
-            {/* //TODO: Replace 2 with current logged in userid */}
-            <Button title='Join' onPress={() => requestJoin(idroutes, 2)} />
+            <Button title='Join' onPress={() => requestJoin(idroutes, user.idusers)} />
             <Button title='Message' />
         </ThemedView>
     );

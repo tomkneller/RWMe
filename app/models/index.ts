@@ -1,8 +1,8 @@
 export type UserAccount = {
-    // id: number;
+    idusers: number;
     name: string;
-    // email: string;
-    // phoneNo: number;
+    email: string;
+    phoneNo: number;
     password: string;
 };
 

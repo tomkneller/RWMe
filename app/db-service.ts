@@ -57,7 +57,7 @@ export const getPendingRequestsForUser = async (userId: number) => {
         }
 
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error fetching requests:', error.response.data);
     }
 }
