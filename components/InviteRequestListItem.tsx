@@ -4,25 +4,15 @@ import { Button, Image, Modal, Text, TextInput, View } from 'react-native';
 import { Request } from '../app/models';
 import { Avatar } from '@rneui/base';
 import { useState } from 'react';
-import { getUser } from '../app/db-service';
+import { acceptRequest, getUser, rejectRequest } from '../app/db-service';
 
 export const InviteRequestListItem: React.FC<{
     requestData: Request;
-}> = ({ requestData: { request_id, user_id, route_id, request_date, status } }) => {
-
+    onAccept: any;
+    onReject: any;
+}> = ({ requestData: { request_id, user_id, route_id, request_date, status }, onAccept, onReject }) => {
 
     const [userName, setUserName] = useState('')
-
-
-    const handleAcceptRequest = (id: number) => {
-        console.log("Accept request", id);
-        console.log(id);
-    }
-
-    const handleRejectRequest = (id: number) => {
-        console.log("reject request", id);
-    }
-
 
     async function getHostName() {
         const hostName = await getUser(user_id);
@@ -49,8 +39,8 @@ export const InviteRequestListItem: React.FC<{
             <ThemedText type='subtitle'>{status}</ThemedText>
             <ThemedText>{request_date}</ThemedText>
             <View style={{ flexDirection: 'row' }}>
-                <Button title='Accept' onPress={() => handleAcceptRequest(request_id)} />
-                <Button title='Decline' onPress={() => handleRejectRequest(request_id)} />
+                <Button title='Accept' onPress={() => onAccept(request_id)} />
+                <Button title='Decline' onPress={() => onReject(request_id)} />
             </View>
 
         </ThemedView>

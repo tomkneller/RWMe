@@ -76,7 +76,24 @@ export const createRequest = async (route_id: number, sender_id: number) => {
 };
 
 
+export const acceptRequest = async (request_id: number) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/users/invite_requests/update`, { requestResponse: 'approved', request_id });
+        console.log(response.data); // Success message and user ID
+    } catch (error: any) {
+        console.error("Error accepting request:", error.response.data);
+    }
+}
 
+
+export const rejectRequest = async (request_id: number) => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/users/invite_requests/update`, { requestResponse: 'declined', request_id, });
+        console.log(response.data); // Success message and user ID
+    } catch (error: any) {
+        console.error("Error rejecting request:", error.response.data);
+    }
+}
 
 /**
  * Create a new user in the users database
